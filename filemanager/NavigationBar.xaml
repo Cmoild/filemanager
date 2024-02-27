@@ -5,10 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:filemanager"
              mc:Ignorable="d" d:DesignWidth="800" Height="40">
+
     <Grid>
         <Button Content="GoBack" x:Name="goBackButton" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Button Content="GoForward" x:Name="goForwardButton" HorizontalAlignment="Left" Margin="59,10,0,0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" x:Name="filePathBar" Margin="126,10,0,0" TextWrapping="Wrap" Text="{Binding DirLink}" VerticalAlignment="Top" Width="664" Height="20"/>
+        <TextBox HorizontalAlignment="Left" x:Name="filePathBar" Margin="126,0,0,0" TextWrapping="Wrap" Text="{Binding Line}" VerticalAlignment="Center" Width="598" Height="20"/>
+        <Button Content="Search" x:Name="searchingButton" Click="searchingButton_Click" HorizontalAlignment="Left" Margin="729,0,0,0" VerticalAlignment="Center"/>
 
     </Grid>
 </UserControl>

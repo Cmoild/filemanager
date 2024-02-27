@@ -18,11 +18,26 @@ namespace filemanager
     {
         public MainWindow()
         {
+            
             InitializeComponent();
             AllocConsole();
-            foreach (DriveInfo drive in drives)
+            lstOfDisks.ItemsSource = ListOfDisks;
+            //Directory.GetDirectories("C:\\").ToList().ForEach(p => Console.WriteLine(p));
+
+        }
+
+        private List<Disk> _listOfDisks = new List<Disk>();
+
+        public List<Disk> ListOfDisks
+        {
+            get
             {
-                Console.WriteLine(drive.Name);
+                foreach (var drive in drives)
+                {
+                    double f = (double)drive.AvailableFreeSpace / (double)drive.TotalSize;
+                    _listOfDisks.Add(new Disk(drive.Name, 5));
+                }
+                return _listOfDisks;
             }
         }
 
@@ -31,6 +46,30 @@ namespace filemanager
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
+
+        public class Disk
+        {
+            string name = "";
+            string pathOfImage = "";
+            double fullness = 0;
+
+            public string Name
+            {
+                get { return name; }
+                set { name = value; }
+            }
+            public double Fullness
+            {
+                get => fullness;
+                set => fullness = value;
+            }
+
+            public Disk(string name, double fullness)
+            {
+                this.name = name;
+                this.fullness = fullness;
+            }
+        }
     }
 
 

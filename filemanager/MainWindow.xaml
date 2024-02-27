@@ -5,8 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:filemanager"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" MinHeight="200" MinWidth="250">
     <Grid>
-        <local:NavigationBar VerticalAlignment="Top" Panel.ZIndex="1" />
+        <local:NavigationBar VerticalAlignment="Top" Panel.ZIndex="1" Line=""/>
+        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,489,0" d:ItemsSource="{d:SampleData}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Height="33" Width="200" Orientation="Horizontal">
+                        <Image Source="C:\Users\Никита\source\repos\filemanager\filemanager\textures\disk_image.png" Height="31" Width="33" ></Image>
+                        <TextBlock Text="{Binding Name}" Width="64"></TextBlock>
+                        <ProgressBar Width="100" Value="{Binding Fullness}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
