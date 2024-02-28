@@ -7,14 +7,26 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" MinHeight="200" MinWidth="250">
     <Grid>
-        <local:NavigationBar VerticalAlignment="Top" Panel.ZIndex="1" Line=""/>
-        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,489,0" d:ItemsSource="{d:SampleData}">
+        <local:NavigationBar x:Name="navigationBar" VerticalAlignment="Top" Panel.ZIndex="1" Line=""/>
+
+        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,422,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Height="33" Width="200" Orientation="Horizontal">
-                        <Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\disk_image.png" Height="31" Width="33" ></Image>
+                    <StackPanel Height="33" Width="283" Orientation="Horizontal">
+                        <Image Source="{Binding PathOfImage}" Height="31" Width="33" ></Image>
                         <TextBlock Text="{Binding Name}" Width="64"></TextBlock>
                         <ProgressBar Width="100" Value="{Binding Fullness}" />
+                        <TextBlock Width="80" Text="{Binding EmptySpace}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="120,40,120,0" Height="350" MouseDoubleClick="ChangePathThruDirectory">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Width="400" Text="{Binding Name}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

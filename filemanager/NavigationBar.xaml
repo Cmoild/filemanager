@@ -9,7 +9,7 @@
     <Grid>
         <Button Content="GoBack" x:Name="goBackButton" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Button Content="GoForward" x:Name="goForwardButton" HorizontalAlignment="Left" Margin="59,10,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" x:Name="filePathBar" Margin="126,0,0,0" TextWrapping="Wrap" Text="{Binding Line}" VerticalAlignment="Center" Width="598" Height="20"/>
+        <TextBox HorizontalAlignment="Left" x:Name="filePathBar" Margin="126,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="598" Height="20"/>
         <Button Content="Search" x:Name="searchingButton" Click="searchingButton_Click" HorizontalAlignment="Left" Margin="729,0,0,0" VerticalAlignment="Center"/>
 
     </Grid>
