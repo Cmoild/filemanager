@@ -12,7 +12,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Height="33" Width="200" Orientation="Horizontal">
-                        <Image Source="C:\Users\Никита\source\repos\filemanager\filemanager\textures\disk_image.png" Height="31" Width="33" ></Image>
+                        <Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\disk_image.png" Height="31" Width="33" ></Image>
                         <TextBlock Text="{Binding Name}" Width="64"></TextBlock>
                         <ProgressBar Width="100" Value="{Binding Fullness}" />
                     </StackPanel>

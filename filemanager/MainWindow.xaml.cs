@@ -18,7 +18,7 @@ namespace filemanager
     {
         public MainWindow()
         {
-            
+            TexturesDirectory = Directory.GetCurrentDirectory() + "\\textures";
             InitializeComponent();
             AllocConsole();
             lstOfDisks.ItemsSource = ListOfDisks;
@@ -35,11 +35,14 @@ namespace filemanager
                 foreach (var drive in drives)
                 {
                     double f = (double)drive.AvailableFreeSpace / (double)drive.TotalSize;
-                    _listOfDisks.Add(new Disk(drive.Name, 5));
+                    Console.WriteLine(f);
+                    _listOfDisks.Add(new Disk(drive.Name, 100 - f * 100));
                 }
                 return _listOfDisks;
             }
         }
+
+        string TexturesDirectory { get; set; }
 
         DriveInfo[] drives = DriveInfo.GetDrives();
 
@@ -64,10 +67,16 @@ namespace filemanager
                 set => fullness = value;
             }
 
+            public string PathOfImage
+            {
+                get => pathOfImage; set => pathOfImage = value;
+            }
+
             public Disk(string name, double fullness)
             {
                 this.name = name;
                 this.fullness = fullness;
+                this.pathOfImage = Directory.GetCurrentDirectory() + "\\textures\\disk_image.png";
             }
         }
     }
