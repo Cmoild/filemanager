@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,27 +17,43 @@ using System.Windows.Shapes;
 
 namespace filemanager
 {
+#if DEBUG
+    class Cons
+    {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AllocConsole();
+    }
+#endif
     /// <summary>
     /// Логика взаимодействия для NavigationBar.xaml
     /// </summary>
     public partial class NavigationBar : UserControl
     {
+
         public NavigationBar()
         {
-            //Line = "";
-            AllocConsole();
+#if DEBUG
+            Cons.AllocConsole();
+#endif
             InitializeComponent();
             
         }
 
         public event EventHandler<DirectoryChangedArgs> DirectoryChanged = (s, e) => { };
 
-        private static string line = "";
+        private string line = "";
 
         public string Line
         {
             get { return line; }
-            set { line = value; this.DataContext = this; Console.WriteLine(1); filePathBar.Text = value; DirectoryChanged(this, new DirectoryChangedArgs(value)); }
+            set 
+            {
+                line = value;
+                this.DataContext = this; 
+                filePathBar.Text = value; 
+                DirectoryChanged(this, new DirectoryChangedArgs(line)); 
+            }
         }
 
         private void searchingButton_Click(object sender, RoutedEventArgs e)
@@ -44,10 +61,11 @@ namespace filemanager
             if (Line != filePathBar.Text) Line = filePathBar.Text;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
+        private void GoBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (Directory.GetParent(Line) != null) Line = Directory.GetParent(Line).FullName;
+            else Line = "";
+        }
     }
 
     public class DirectoryChangedArgs

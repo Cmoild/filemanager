@@ -9,7 +9,7 @@
     <Grid>
         <local:NavigationBar x:Name="navigationBar" VerticalAlignment="Top" Panel.ZIndex="1" Line=""/>
 
-        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,422,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks">
+        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,422,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks" d:IsHidden="True">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Height="33" Width="283" Orientation="Horizontal">
@@ -22,11 +22,11 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="120,40,120,0" Height="350" MouseDoubleClick="ChangePathThruDirectory">
+        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="120,40,10,0" Height="350" MouseDoubleClick="ChangePathThruDirectory">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Width="400" Text="{Binding Name}"/>
+                        <TextBlock Width="519" Text="{Binding Name}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

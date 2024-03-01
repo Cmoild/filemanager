@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -14,21 +16,23 @@ using System.Xml.Linq;
 
 namespace filemanager
 {
-    //TODO: список каталогов доделать, перемещение по папкам, список файлов
+    //TODO: открытие файлов, иконки
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
-            //worker.DirectoryChanged += DirectoryChangedHandler;
-            
+#if DEBUG
+            Cons.AllocConsole();
+#endif
+
             TexturesDirectory = Directory.GetCurrentDirectory() + "\\textures";
             InitializeComponent();
             AddDrivesToList();
             navigationBar.DirectoryChanged += DirectoryChangedHandler;
-            AllocConsole();
             lstOfDisks.ItemsSource = ListOfDisks;
             //Directory.GetDirectories("C:\\").ToList().ForEach(p => Console.WriteLine(p));
-
+            //ProcessStartInfo processStartInfo = new ProcessStartInfo("Code.exe", @"D:\shizika.txt");
+            //Process.Start(processStartInfo);
         }
 
         private void AddDrivesToList()
@@ -41,6 +45,8 @@ namespace filemanager
             }
         }
 
+        public int iter = 0;
+
         private void DirectoryChangedHandler(object? sender, DirectoryChangedArgs e)
         {
             if (e.Path == "")
@@ -50,10 +56,34 @@ namespace filemanager
             }
             else
             {
+                if (!Directory.Exists(e.Path))
+                {
+                    navigationBar.Line = "";
+                    return;
+                }
+
                 lstOfDisks.Visibility = Visibility.Collapsed;
                 lstOfDirectories.Visibility = Visibility.Visible;
+                ListOfDirectories.Clear();
+                string[] dirs = Directory.GetDirectories(@e.Path);
+
+                foreach (string name in dirs)
+                {
+                    DirectoryInfo dir = new DirectoryInfo(name);
+                    ListOfDirectories.Add(new MyDirectories(dir.Name, @e.Path, ContentOfDirectory.Directory));
+                }
+
+                string[] files = Directory.GetFiles(@e.Path);
+
+                foreach (string name in files)
+                {
+                    DirectoryInfo dir = new DirectoryInfo(name);
+                    ListOfDirectories.Add(new MyDirectories(dir.Name, e.Path, ContentOfDirectory.File));
+                }
+
+                lstOfDirectories.ItemsSource = ListOfDirectories;
+
             }
-            //Console.WriteLine(e.Path);
         }
 
         private List<Disk> _listOfDisks = new List<Disk>();
@@ -72,13 +102,25 @@ namespace filemanager
             }
         }
 
+        private ObservableCollection<MyDirectories> _listOfDirectories = new ObservableCollection<MyDirectories>();
+
+        public ObservableCollection<MyDirectories> ListOfDirectories
+        {
+            set
+            {
+                _listOfDirectories = value;
+                //lstOfDirectories.ItemsSource = ListOfDirectories;
+            }
+
+            get
+            {
+                return _listOfDirectories;
+            }
+        }
+
         string TexturesDirectory { get; set; }
 
         DriveInfo[] drives = DriveInfo.GetDrives();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
 
         public class Disk
         {
@@ -111,11 +153,20 @@ namespace filemanager
             }
         }
 
+        public enum ContentOfDirectory
+        {
+            File,
+            Directory
+        }
+
         public class MyDirectories
         {
+
             string _name = "";
 
             string _path = "";
+
+            public ContentOfDirectory content;
 
             public string Name
             {
@@ -129,10 +180,11 @@ namespace filemanager
                 set { _path = value; }
             }
 
-            public MyDirectories(string name, string path)
+            public MyDirectories(string name, string path, ContentOfDirectory content)
             {
                 Name = name;
                 PathOfDirectory = path;
+                this.content = content;
             }
         }
 
@@ -144,8 +196,13 @@ namespace filemanager
 
         private void ChangePathThruDirectory(object sender, MouseButtonEventArgs e)
         {
-            //navigationBar.Line = ListOfDisks[lstOfDisks.SelectedIndex].Name;
-
+            if (ListOfDirectories[lstOfDirectories.SelectedIndex].content == ContentOfDirectory.Directory) 
+                navigationBar.Line = ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory + '\\' + ListOfDirectories[lstOfDirectories.SelectedIndex].Name;
+            foreach (MyDirectories item in lstOfDirectories.Items)
+            {
+                Console.WriteLine(item.Name);
+            }
+            
         }
 
     }
