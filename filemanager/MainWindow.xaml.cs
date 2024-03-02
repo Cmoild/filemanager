@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -16,7 +17,7 @@ using System.Xml.Linq;
 
 namespace filemanager
 {
-    //TODO: открытие файлов, иконки
+    //TODO: открытие файлов (добавить разные варианты), иконки, копирование, перемещение, удаление, предпросмотр
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -24,13 +25,11 @@ namespace filemanager
 #if DEBUG
             Cons.AllocConsole();
 #endif
-
-            TexturesDirectory = Directory.GetCurrentDirectory() + "\\textures";
             InitializeComponent();
             AddDrivesToList();
             navigationBar.DirectoryChanged += DirectoryChangedHandler;
             lstOfDisks.ItemsSource = ListOfDisks;
-            //Directory.GetDirectories("C:\\").ToList().ForEach(p => Console.WriteLine(p));
+
             //ProcessStartInfo processStartInfo = new ProcessStartInfo("Code.exe", @"D:\shizika.txt");
             //Process.Start(processStartInfo);
         }
@@ -40,12 +39,10 @@ namespace filemanager
             foreach (var drive in drives)
             {
                 double f = (double)drive.AvailableFreeSpace / (double)drive.TotalSize;
-                Console.WriteLine(f);
+                //Console.WriteLine(f);
                 _listOfDisks.Add(new Disk(drive.Name, 100 - f * 100));
             }
         }
-
-        public int iter = 0;
 
         private void DirectoryChangedHandler(object? sender, DirectoryChangedArgs e)
         {
@@ -65,7 +62,18 @@ namespace filemanager
                 lstOfDisks.Visibility = Visibility.Collapsed;
                 lstOfDirectories.Visibility = Visibility.Visible;
                 ListOfDirectories.Clear();
-                string[] dirs = Directory.GetDirectories(@e.Path);
+
+                string[] dirs = { };
+
+                try
+                {
+                    dirs = Directory.GetDirectories(@e.Path);
+                }
+                catch
+                {
+                    Console.WriteLine("ACCESS DENIED");
+                    return;
+                }
 
                 foreach (string name in dirs)
                 {
@@ -118,8 +126,6 @@ namespace filemanager
             }
         }
 
-        string TexturesDirectory { get; set; }
-
         DriveInfo[] drives = DriveInfo.GetDrives();
 
         public class Disk
@@ -144,12 +150,17 @@ namespace filemanager
                 get => pathOfImage; set => pathOfImage = value;
             }
 
+            public string EmptySpace { get; set; }
+
             public Disk(string name, double fullness)
             {
                 this.name = name;
                 this.fullness = fullness;
                 this.pathOfImage = Directory.GetCurrentDirectory() + "\\textures\\disk_image.png";
                 pathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\disk_image.png";
+                DriveInfo driveInfo = new DriveInfo(name);
+                EmptySpace = "Avalable free space " + (double)driveInfo.AvailableFreeSpace / Math.Pow(1024, 3)
+                    + "\n" + "Total space " + (double)driveInfo.TotalSize / Math.Pow(1024, 3);
             }
         }
 
@@ -198,11 +209,30 @@ namespace filemanager
         {
             if (ListOfDirectories[lstOfDirectories.SelectedIndex].content == ContentOfDirectory.Directory) 
                 navigationBar.Line = ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory + '\\' + ListOfDirectories[lstOfDirectories.SelectedIndex].Name;
-            foreach (MyDirectories item in lstOfDirectories.Items)
+            else
             {
-                Console.WriteLine(item.Name);
+                Console.WriteLine("FILE");
+                OpenFile(ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory + '\\' + ListOfDirectories[lstOfDirectories.SelectedIndex].Name);
             }
             
+        }
+
+        private void OpenFile(string @fn)
+        {
+            Process p = new Process();
+            ProcessStartInfo pi = new ProcessStartInfo();
+            pi.UseShellExecute = true;
+            pi.FileName = @fn;
+            p.StartInfo = pi;
+            //MessageBox.Show("123");
+            try
+            {
+                p.Start();
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.Message);
+            }
         }
 
     }
