@@ -10,8 +10,9 @@
         <Button Content="^" x:Name="goUpButton" HorizontalAlignment="Left" Margin="27,0,0,0" Click="GoUpButton_Click" VerticalAlignment="Center"/>
         <Button Content="&gt;" x:Name="goForwardButton" HorizontalAlignment="Left" Margin="44,0,0,0" VerticalAlignment="Center" Click="goForwardButton_Click"/>
         <Button Content="&lt;" x:Name="goBackButton" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Click="goBackButton_Click"/>
-        <TextBox x:Name="filePathBar" Margin="61,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="20" HorizontalAlignment="Left" Width="685"/>
-        <Button Content="Search" x:Name="searchingButton" Click="searchingButton_Click" Margin="751,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
+        <TextBox x:Name="filePathBar" Margin="61,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="20" HorizontalAlignment="Left" Width="424"/>
+        <Button Content="Find directory" x:Name="searchingButton" Click="searchingButton_Click" Margin="490,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBox Margin="572,10,0,10" x:Name="searchBar" HorizontalAlignment="Left" Width="157"/>
+        <Button x:Name="userSearchButton" Margin="734,10,0,10" HorizontalAlignment="Left" Width="56" Content="Search" Click="userSearchButton_Click"/>
     </Grid>
 </UserControl>

@@ -35,7 +35,13 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    
+                    <MenuItem Header="Properties"/>
+                    <MenuItem Header="Add to Favourites"/>
+                    <Separator/>
+                    <MenuItem Header="Copy"/>
+                    <MenuItem Header="Paste"/>
+                    <MenuItem Header="Cut"/>
+                    <MenuItem Header="Delete"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>

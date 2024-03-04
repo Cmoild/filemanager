@@ -16,10 +16,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace filemanager
 {
-    //TODO: открытие файлов (добавить разные варианты), предпросмотр, сортировка (алфавит, дата, тип?, поиск по названию?, размер)
+    //TODO: открытие файлов (добавить разные варианты), предпросмотр
     //контекстное меню: добавление в избранное, свойства, переименование, копирование, перемещение, удаление
     public partial class MainWindow : Window
     {
@@ -32,7 +33,9 @@ namespace filemanager
             AddDrivesToList();
             navigationBar.DirectoryChanged += DirectoryChangedHandler;
             leftPanel.FavouritesClicked += OnFavouritesClicked;
+            navigationBar.SearchingLineChanged += SearchElements;
             lstOfDisks.ItemsSource = ListOfDisks;
+            //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
 
         private void AddDrivesToList()
@@ -139,13 +142,14 @@ namespace filemanager
 
         private void ChangePathThruDirectory(object sender, MouseButtonEventArgs e)
         {
-            if (ListOfDirectories[lstOfDirectories.SelectedIndex].content == ContentOfDirectory.Directory) 
-                navigationBar.Line = ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory + '\\' + ListOfDirectories[lstOfDirectories.SelectedIndex].Name;
+            var selected = lstOfDirectories.SelectedValue as FoldersAndFiles;
+            if (selected.content == ContentOfDirectory.Directory) 
+                navigationBar.Line = selected.PathOfDirectory + '\\' + selected.Name;
             else
             {
-                OpenFile(ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory + '\\' + ListOfDirectories[lstOfDirectories.SelectedIndex].Name);
-                leftPanel.RecentFiles.Add(new FoldersAndFiles(ListOfDirectories[lstOfDirectories.SelectedIndex].Name,
-                    ListOfDirectories[lstOfDirectories.SelectedIndex].PathOfDirectory,
+                OpenFile(selected.PathOfDirectory + '\\' + selected.Name);
+                leftPanel.RecentFiles.Add(new FoldersAndFiles(selected.Name,
+                    selected.PathOfDirectory,
                     ContentOfDirectory.File));
             }
             
@@ -181,6 +185,12 @@ namespace filemanager
             {
                 OpenFile(e.Path);
             }
+        }
+
+        private async void SearchElements(object sender, EventArgs e)
+        {
+            lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@navigationBar.Line, navigationBar.SearchingLine));
+            Searching.result.Clear();
         }
 
     }
@@ -265,6 +275,61 @@ namespace filemanager
             DriveInfo driveInfo = new DriveInfo(name);
             EmptySpace = "Avalable free space " + string.Format("{0:0.00}", (double)driveInfo.AvailableFreeSpace / Math.Pow(1024, 3)) + " GB"
                 + "\n" + "Total space " + string.Format("{0:0.00}", (double)driveInfo.TotalSize / Math.Pow(1024, 3)) + " GB";
+        }
+    }
+
+    public class Searching
+    {
+        public static List<FoldersAndFiles> result = new List<FoldersAndFiles>();
+
+        public static List<FoldersAndFiles> SearchInDirectory(string directory, string target)
+        {
+            result.Clear();
+
+            if (!Directory.Exists(directory))
+            {
+                MessageBox.Show("Directory does not exist");
+                return null;
+            }
+            MakeList(directory, target);
+
+            foreach (var cont in result)
+            {
+                Console.WriteLine(cont.Name + " " + cont.PathOfDirectory + " " + cont.content);
+            }
+
+            return result;
+        }
+
+        private static void MakeList(string directory, string target)
+        {
+            string[] dirs = { };
+
+            try
+            {
+                dirs = Directory.GetDirectories(directory);
+            }
+            catch
+            {
+                return;
+            }
+
+            foreach (string name in dirs)
+            {
+                DirectoryInfo dir = new DirectoryInfo(name);
+                if (dir.Name.ToUpper().Contains(target.ToUpper()))
+                    result.Add(new FoldersAndFiles(dir.Name, directory, ContentOfDirectory.Directory));
+                MakeList(name, target);
+            }
+
+            string[] files = Directory.GetFiles(directory);
+
+            foreach (string name in files)
+            {
+                DirectoryInfo dir = new DirectoryInfo(name);
+                if (dir.Name.ToUpper().Contains(target.ToUpper()))
+                    result.Add(new FoldersAndFiles(dir.Name, directory, ContentOfDirectory.File));
+            }
         }
     }
 

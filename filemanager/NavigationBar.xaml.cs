@@ -108,6 +108,28 @@ namespace filemanager
                 Line = _lines[_count];
             }
         }
+
+        private string? _searchingLine = "";
+
+        public string SearchingLine
+        {
+            get
+            {
+                return _searchingLine;
+            }
+            set
+            {
+                _searchingLine = value;
+                SearchingLineChanged(this, EventArgs.Empty);
+            }
+        }
+
+        public event EventHandler SearchingLineChanged = (s, e) => { };
+
+        private void userSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (searchBar.Text.Length > 1) SearchingLine = searchBar.Text;
+        }
     }
 
     public class DirectoryChangedArgs
