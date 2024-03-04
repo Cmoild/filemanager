@@ -37,21 +37,27 @@ namespace filemanager
             Cons.AllocConsole();
 #endif
             InitializeComponent();
-            
+            //Console.WriteLine(_lines.Count);
         }
 
         public event EventHandler<DirectoryChangedArgs> DirectoryChanged = (s, e) => { };
 
-        private string line = "";
+        private string? line = "";
 
-        public string Line
+        public string? Line
         {
             get { return line; }
             set 
             {
                 line = value;
                 this.DataContext = this; 
-                filePathBar.Text = value; 
+                filePathBar.Text = value;
+                if ((_lines.Count == _count + 1) || (!_lines.Contains(value))) 
+                { 
+                    _lines.RemoveRange(_count + 1, _lines.Count - _count - 1); 
+                    _lines.Add(value); 
+                    _count++; 
+                }
                 DirectoryChanged(this, new DirectoryChangedArgs(line)); 
             }
         }
@@ -61,17 +67,59 @@ namespace filemanager
             if (Line != filePathBar.Text) Line = filePathBar.Text;
         }
 
-        private void GoBackButton_Click(object sender, RoutedEventArgs e)
+        private void GoUpButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.GetParent(Line) != null) Line = Directory.GetParent(Line).FullName;
-            else Line = "";
+            try
+            {
+                if (Directory.GetParent(Line) != null) Line = Directory.GetParent(Line).FullName;
+                else Line = "";
+            }
+            catch
+            {
+                Line = "";
+            }
+        }
+
+        private List<string>? _lines = new List<string>() { "" };
+        private int _count = 0;
+
+        private void goForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Forward");
+            _lines.ForEach(line => Console.Write(line + " "));
+            Console.WriteLine();
+            if (_count < _lines.Count - 1) 
+            {
+                Console.WriteLine(_lines[_count + 1]);
+                Line = _lines[_count + 1];
+                _count++;
+            }
+        }
+
+        private void goBackButton_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Backward");
+            _lines.ForEach(line => Console.Write(line + " "));
+            Console.WriteLine("\n" + _count);
+            if (_count > 0)
+            {
+                Console.WriteLine(_lines[_count - 1]);
+                _count--;
+                Line = _lines[_count];
+            }
         }
     }
 
     public class DirectoryChangedArgs
     {
         public string? Path { get; set; }
+        public ContentOfDirectory ContentOfDirectory { get; set; }
         public DirectoryChangedArgs(string? path) { Path = path; }
+        public DirectoryChangedArgs(string? path, ContentOfDirectory contentOfDirectory)
+        {
+            Path = path;
+            ContentOfDirectory = contentOfDirectory;
+        }
     }
 
 }

@@ -5,31 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:filemanager"
         mc:Ignorable="d"
+        x:Name="mainWindow"
         Title="MainWindow" Height="450" Width="800" MinHeight="200" MinWidth="250">
     <Grid>
-        <local:NavigationBar x:Name="navigationBar" VerticalAlignment="Top" Panel.ZIndex="1" Line=""/>
+        <local:NavigationBar x:Name="navigationBar" VerticalAlignment="Top" Panel.ZIndex="1" Line="" Width="800" HorizontalAlignment="Center" Margin="0,2,0,0"/>
 
-        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Margin="10,40,272,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks">
+        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Visibility="Visible" Margin="205,38,82,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Height="33" Width="404" Orientation="Horizontal">
                         <Image Source="{Binding PathOfImage}" Height="31" Width="33" ></Image>
-                        <TextBlock Text="{Binding Name}" Width="64"></TextBlock>
+                        <TextBlock Text="{Binding Name}" Width="35"></TextBlock>
                         <ProgressBar Width="100" Value="{Binding Fullness}" />
+                        <TextBlock Width="10"/>
                         <TextBlock Width="208" Text="{Binding EmptySpace}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="120,40,10,0" Height="350" MouseDoubleClick="ChangePathThruDirectory">
+        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="205,38,0,0" Height="386" MouseDoubleClick="ChangePathThruDirectory">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding PathOfImage}" Width="16" Height="16" />
                         <TextBlock Width="519" Text="{Binding Name}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
+
+        <local:LeftPanel x:Name="leftPanel" Margin="0,40,0,10" HorizontalAlignment="Left" Width="200"/>
     </Grid>
 </Window>

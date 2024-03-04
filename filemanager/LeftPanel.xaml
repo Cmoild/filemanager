@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="filemanager.LeftPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:filemanager"
+             mc:Ignorable="d" 
+             d:DesignHeight="410" Width="200">
+    <StackPanel>
+        <TextBlock Text="Favourites"/>
+        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstFavourites" Height="181" HorizontalAlignment="Stretch" MouseDoubleClick="lstFavourites_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding PathOfImage}" Width="16" Height="16" />
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock Text="Recent files"/>
+        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstRecentFiles" Height="197" MouseDoubleClick="lstRecentFiles_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding PathOfImage}" Width="16" Height="16" />
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>
