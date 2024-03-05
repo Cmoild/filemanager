@@ -7,10 +7,18 @@
         mc:Ignorable="d"
         x:Name="mainWindow"
         Title="MainWindow" Height="450" Width="800" MinHeight="200" MinWidth="250">
-    <Grid>
-        <local:NavigationBar x:Name="navigationBar" VerticalAlignment="Top" Panel.ZIndex="1" Line="" Width="800" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="297*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="410*"/>
+        </Grid.RowDefinitions>
+        <local:NavigationBar Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" x:Name="navigationBar" VerticalAlignment="Center" Panel.ZIndex="1" Line="" HorizontalAlignment="Left" MinWidth="800" Width="{Binding ActualWidth, ElementName=mainWindow, Mode=OneWay}" Height="40"/>
 
-        <ListBox x:Name="lstOfDisks" VerticalAlignment="Top" Visibility="Visible" Margin="205,38,82,0" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks">
+        <ListBox x:Name="lstOfDisks" Visibility="Visible" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDisks" Grid.Column="1" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Height="33" Width="404" Orientation="Horizontal">
@@ -24,7 +32,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ListBox x:Name="lstOfDirectories" VerticalAlignment="Top" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" Margin="205,38,0,0" Height="386" MouseDoubleClick="ChangePathThruDirectory">
+        <ListBox x:Name="lstOfDirectories" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDirectory" Grid.Column="1" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -35,7 +43,9 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Properties"/>
+                    <MenuItem Header="Open" Click="MenuItem_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Properties" Click="MenuItem_Click"/>
                     <MenuItem Header="Add to Favourites"/>
                     <Separator/>
                     <MenuItem Header="Copy"/>
@@ -46,6 +56,6 @@
             </ListBox.ContextMenu>
         </ListBox>
 
-        <local:LeftPanel x:Name="leftPanel" Margin="0,40,0,10" HorizontalAlignment="Left" Width="200"/>
+        <local:LeftPanel x:Name="leftPanel" Grid.Row="1"/>
     </Grid>
 </Window>

@@ -64,7 +64,7 @@ namespace filemanager
 
         private void searchingButton_Click(object sender, RoutedEventArgs e)
         {
-            if (Line != filePathBar.Text) Line = filePathBar.Text;
+            Line = filePathBar.Text;
         }
 
         private void GoUpButton_Click(object sender, RoutedEventArgs e)

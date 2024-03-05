@@ -4,15 +4,109 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:filemanager"
+             BorderBrush="Blue"
+             BorderThickness="0.5"
              mc:Ignorable="d" d:DesignWidth="800" Height="40">
+    <UserControl.Resources>
+        <ControlTemplate TargetType="Button" x:Key="myButton">
+            <Border CornerRadius="4"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    Height="{TemplateBinding Height}"
+                    Width="{TemplateBinding Width}" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="false">
+                    <Setter Property="Background" Value="#FFF3F3F3" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate TargetType="Button" x:Key="arrowButton">
+            <Border CornerRadius="30"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            Background="{TemplateBinding Background}"
+            Height="{TemplateBinding Height}"
+            Width="{TemplateBinding Width}" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Content="{TemplateBinding Content}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="false">
+                    <Setter Property="Background" Value="#FFF3F3F3" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate TargetType="TextBox" x:Key="myTextBox">
+            <Border 
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    Background="{TemplateBinding Background}"
+                    BorderThickness="0.5" CornerRadius="4">
+                <ScrollViewer x:Name="PART_ContentHost" Margin="0,1,0,-1"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsFocused" Value="False">
+                    <Setter Property="Background" Value="#FFF3F3F3"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <UserControl.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFD4EAFF" Offset="0.618"/>
+            <GradientStop Color="White" Offset="0"/>
+        </LinearGradientBrush>
+    </UserControl.Background>
 
-    <Grid>
-        <Button Content="^" x:Name="goUpButton" HorizontalAlignment="Left" Margin="27,0,0,0" Click="GoUpButton_Click" VerticalAlignment="Center"/>
-        <Button Content="&gt;" x:Name="goForwardButton" HorizontalAlignment="Left" Margin="44,0,0,0" VerticalAlignment="Center" Click="goForwardButton_Click"/>
-        <Button Content="&lt;" x:Name="goBackButton" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Click="goBackButton_Click"/>
-        <TextBox x:Name="filePathBar" Margin="61,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="20" HorizontalAlignment="Left" Width="424"/>
-        <Button Content="Find directory" x:Name="searchingButton" Click="searchingButton_Click" Margin="490,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-        <TextBox Margin="572,10,0,10" x:Name="searchBar" HorizontalAlignment="Left" Width="157"/>
-        <Button x:Name="userSearchButton" Margin="734,10,0,10" HorizontalAlignment="Left" Width="56" Content="Search" Click="userSearchButton_Click"/>
+    <Grid x:Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="99*" MaxWidth="100"/>
+            <ColumnDefinition Width="382*"/>
+            <ColumnDefinition Width="59*" MaxWidth="70"/>
+            <ColumnDefinition Width="259*" MaxWidth="306"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="goUpButton" Template="{StaticResource arrowButton}" HorizontalAlignment="Left" Click="GoUpButton_Click" VerticalAlignment="Center" Width="22" Height="22" Grid.Column="0" Margin="37,0,0,0">
+            <Image Source="C:\Users\Никита\source\repos\filemanager\filemanager\textures\arrow_up.png"/>
+        </Button>
+        <Button Template="{StaticResource arrowButton}" x:Name="goForwardButton" HorizontalAlignment="Left" Width="22" Height="22" Margin="64,0,0,0" Grid.Column="0"  VerticalAlignment="Center" Click="goForwardButton_Click">
+            <Image Source="C:\Users\Никита\source\repos\filemanager\filemanager\textures\arrow_right.png"/>
+        </Button>
+        <Button x:Name="goBackButton" HorizontalAlignment="Left" Grid.Column="0" VerticalAlignment="Center" Click="goBackButton_Click" Template="{StaticResource arrowButton}" Width="22" Height="22" Margin="10,0,0,0">
+            <Image Source="C:\Users\Никита\source\repos\filemanager\filemanager\textures\arrow_left.png"/>
+        </Button>
+        <TextBox x:Name="filePathBar"  Template="{StaticResource myTextBox}" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="20" Grid.Column="1" Margin="10,0,10,0"/>
+        <Button Content="Find" Template="{StaticResource myButton}" x:Name="searchingButton" Click="searchingButton_Click" VerticalAlignment="Center" HorizontalAlignment="Center" Width="56" Grid.Column="2" Height="20"/>
+        <TextBox Margin="4,10,0,11" x:Name="searchBar" Template="{StaticResource myTextBox}" HorizontalAlignment="Left" Width="164" Grid.Column="3"/>
+        <Button x:Name="userSearchButton" Template="{StaticResource myButton}" Margin="173,0,0,0" HorizontalAlignment="Left" Width="56" VerticalAlignment="Center"  Content="Search" Click="userSearchButton_Click" Grid.Column="3" Height="19"/>
     </Grid>
 </UserControl>

@@ -189,10 +189,15 @@ namespace filemanager
 
         private async void SearchElements(object sender, EventArgs e)
         {
-            lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@navigationBar.Line, navigationBar.SearchingLine));
+            await Task.Run(() => Searching.SearchInDirectory(@navigationBar.Line, navigationBar.SearchingLine));
+            lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.result);
             Searching.result.Clear();
         }
 
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 
     public enum ContentOfDirectory
@@ -282,7 +287,7 @@ namespace filemanager
     {
         public static List<FoldersAndFiles> result = new List<FoldersAndFiles>();
 
-        public static List<FoldersAndFiles> SearchInDirectory(string directory, string target)
+        public static async Task<List<FoldersAndFiles>> SearchInDirectory(string directory, string target)
         {
             result.Clear();
 
