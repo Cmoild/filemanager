@@ -97,6 +97,7 @@ namespace filemanager
         {
             FoldersAndFiles selected = (FoldersAndFiles)lstFavourites.SelectedItem;
             FavouritesClicked(this, new DirectoryChangedArgs(selected.PathOfDirectory + '\\' + selected.Name));
+            if (selected.content == ContentOfDirectory.File) RecentFiles.Add(selected);
         }
     }
 }

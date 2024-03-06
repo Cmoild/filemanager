@@ -4,11 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:filemanager"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             Background="White"
              d:DesignHeight="380" Width="200">
-    <StackPanel>
-        <TextBlock Text="Favourites"/>
-        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstFavourites" Height="181" HorizontalAlignment="Stretch" MouseDoubleClick="lstFavourites_MouseDoubleClick">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" x:Name="fovouritesText">
+            <TextBlock Text="Favourites" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstFavourites" HorizontalAlignment="Stretch" MouseDoubleClick="lstFavourites_MouseDoubleClick" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -18,8 +27,10 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Text="Recent files"/>
-        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstRecentFiles" Height="160" MouseDoubleClick="lstRecentFiles_MouseDoubleClick">
+        <Border Grid.Row="2">
+            <TextBlock Text="Recent files" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstRecentFiles" MouseDoubleClick="lstRecentFiles_MouseDoubleClick" Grid.Row="3">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -29,5 +40,5 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-    </StackPanel>
+    </Grid>
 </UserControl>

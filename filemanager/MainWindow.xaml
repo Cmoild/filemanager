@@ -31,8 +31,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
-        <ListBox x:Name="lstOfDirectories" Visibility="Collapsed" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDirectory" Grid.Column="1" Grid.Row="1">
+<!--
+        <ListBox x:Name="lstOfDirectories" Visibility="Collapsed" SelectionMode="Extended" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDirectory" Grid.Column="1" Grid.Row="1">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -43,10 +43,10 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Open" Click="MenuItem_Click"/>
+                    <MenuItem Header="Open"/>
                     <Separator/>
-                    <MenuItem Header="Properties" Click="MenuItem_Click"/>
-                    <MenuItem Header="Add to Favourites"/>
+                    <MenuItem Header="Properties"/>
+                    <MenuItem Header="Add to Favourites" Name="addToFavourites" Click="addToFavourites_Click"/>
                     <Separator/>
                     <MenuItem Header="Copy"/>
                     <MenuItem Header="Paste"/>
@@ -55,7 +55,9 @@
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
-
+-->
         <local:LeftPanel x:Name="leftPanel" Grid.Row="1"/>
+
+        <local:FilesList x:Name="filesListBox" Grid.Column="1" Grid.Row="1" Visibility="Collapsed"/>
     </Grid>
 </Window>

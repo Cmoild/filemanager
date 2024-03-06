@@ -34,6 +34,8 @@ namespace filemanager
             navigationBar.DirectoryChanged += DirectoryChangedHandler;
             leftPanel.FavouritesClicked += OnFavouritesClicked;
             navigationBar.SearchingLineChanged += SearchElements;
+            filesListBox.DoubleClick += ChangePathThruDirectory;
+            filesListBox.AddToFavouritesClick += addToFavourites_Click;
             lstOfDisks.ItemsSource = ListOfDisks;
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
@@ -53,7 +55,7 @@ namespace filemanager
             if (e.Path == "")
             {
                 lstOfDisks.Visibility = Visibility.Visible;
-                lstOfDirectories.Visibility = Visibility.Collapsed;
+                filesListBox.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -65,7 +67,7 @@ namespace filemanager
                 }
 
                 lstOfDisks.Visibility = Visibility.Collapsed;
-                lstOfDirectories.Visibility = Visibility.Visible;
+                filesListBox.Visibility = Visibility.Visible;
                 ListOfDirectories.Clear();
 
                 string[] dirs = { };
@@ -84,7 +86,7 @@ namespace filemanager
                 foreach (string name in dirs)
                 {
                     DirectoryInfo dir = new DirectoryInfo(name);
-                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, @e.Path, ContentOfDirectory.Directory));
+                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, @e.Path, ContentOfDirectory.Directory, dir.LastAccessTime, dir.Extension));
                 }
 
                 string[] files = Directory.GetFiles(@e.Path);
@@ -92,10 +94,10 @@ namespace filemanager
                 foreach (string name in files)
                 {
                     DirectoryInfo dir = new DirectoryInfo(name);
-                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, e.Path, ContentOfDirectory.File));
+                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, e.Path, ContentOfDirectory.File, dir.LastAccessTime, dir.Extension));
                 }
 
-                lstOfDirectories.ItemsSource = ListOfDirectories;
+                filesListBox.lstOfDirectories.ItemsSource = ListOfDirectories;
 
             }
         }
@@ -140,11 +142,16 @@ namespace filemanager
             lstOfDisks.SelectedIndex = -1;
         }
 
-        private void ChangePathThruDirectory(object sender, MouseButtonEventArgs e)
+        private void ChangePathThruDirectory(object sender, EventArgs e)
         {
-            var selected = lstOfDirectories.SelectedValue as FoldersAndFiles;
-            if (selected.content == ContentOfDirectory.Directory) 
-                navigationBar.Line = selected.PathOfDirectory + '\\' + selected.Name;
+            var selected = sender as FoldersAndFiles;
+            if (selected.content == ContentOfDirectory.Directory)
+            {
+                if (selected.PathOfDirectory[selected.PathOfDirectory.Length - 1] != '\\')
+                    navigationBar.Line = selected.PathOfDirectory + '\\' + selected.Name;
+                else
+                    navigationBar.Line = selected.PathOfDirectory + selected.Name;
+            }
             else
             {
                 OpenFile(selected.PathOfDirectory + '\\' + selected.Name);
@@ -190,13 +197,15 @@ namespace filemanager
         private async void SearchElements(object sender, EventArgs e)
         {
             await Task.Run(() => Searching.SearchInDirectory(@navigationBar.Line, navigationBar.SearchingLine));
-            lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.result);
+            filesListBox.lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.result);
             Searching.result.Clear();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void addToFavourites_Click(object sender, EventArgs e)
         {
-            
+            FoldersAndFiles selectded = sender as FoldersAndFiles;
+            Console.WriteLine(selectded.Name);
+            leftPanel.Favourites.Add(selectded);
         }
     }
 
@@ -227,6 +236,10 @@ namespace filemanager
             set { _path = value; }
         }
 
+        public string LastEdit { get; set; }
+
+        public string Extencion { get; set; }
+
         public string PathOfImage { get; set; }
 
         public FoldersAndFiles(string name, string path, ContentOfDirectory content)
@@ -244,6 +257,25 @@ namespace filemanager
                 PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
                 PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
             }
+        }
+
+        public FoldersAndFiles(string name, string path, ContentOfDirectory content, DateTime date, string extencion)
+        {
+            Name = name;
+            PathOfDirectory = path;
+            this.content = content;
+            LastEdit = date.ToString("dd.MM.yyyy H:mm");
+            if (content == ContentOfDirectory.Directory)
+            {
+                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
+                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
+            }
+            else
+            {
+                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
+                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
+            }
+            Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
         }
     }
 

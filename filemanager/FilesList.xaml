@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="filemanager.FilesList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:filemanager"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="600">
+    <Grid x:Name="filesListGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="419*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="125" Width="10*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition MinWidth="100"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition MinWidth="100"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition MinWidth="100"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition MinWidth="20"/>
+        </Grid.ColumnDefinitions>
+        <GridSplitter Grid.Row="0" Width="3" Grid.Column="1" HorizontalAlignment="Center" />
+        <GridSplitter Grid.Row="0" Width="3" Grid.Column="3" HorizontalAlignment="Center" />
+        <GridSplitter Grid.Row="0" Width="3" Grid.Column="5" HorizontalAlignment="Center" />
+        <GridSplitter Grid.Row="0" Width="3" Grid.Column="7" HorizontalAlignment="Center" />
+        
+        <ListBox x:Name="lstOfDirectories" d:ItemsSource="{d:SampleData}" Grid.ColumnSpan="9" Grid.Column="0" Grid.Row="1" MouseDoubleClick="lstOfDirectories_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Width="{Binding ElementName=nameText, Path=ActualWidth}">
+                            <Image Source="{Binding PathOfImage}" Width="16" Height="16" HorizontalAlignment="Left" />
+                            <TextBlock Text="{Binding Name}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <Border Width="{Binding ElementName=timeText, Path=ActualWidth}">
+                            <TextBlock Text="{Binding LastEdit}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Border Width="{Binding ElementName=typeText, Path=ActualWidth}">
+                            <TextBlock Text="{Binding Extencion}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <Border Width="{Binding ElementName=sizeText, Path=ActualWidth}">
+                            <TextBlock Text="size" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Open" Name="openButton" Click="openButton_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Properties"/>
+                    <MenuItem Header="Add to Favourites" Name="addToFavourites" Click="addToFavourites_Click"/>
+                    <Separator/>
+                    <MenuItem Header="New">
+                        <MenuItem Header="Folder"/>
+                        <MenuItem Header="Text document"/>
+                    </MenuItem>
+                    <MenuItem Header="Copy"/>
+                    <MenuItem Header="Paste"/>
+                    <MenuItem Header="Cut"/>
+                    <MenuItem Header="Delete"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+        
+        <Border Grid.Column="0" Grid.Row="0" x:Name="nameText">
+            <TextBlock Text="Name" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Column="2" Grid.Row="0" x:Name="timeText">
+            <TextBlock Text="Edit time" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Column="4" Grid.Row="0" x:Name="typeText">
+            <TextBlock Text="Type" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        <Border Grid.Column="6" Grid.Row="0" x:Name="sizeText">
+            <TextBlock Text="Size" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Border>
+        
+    </Grid>
+</UserControl>
