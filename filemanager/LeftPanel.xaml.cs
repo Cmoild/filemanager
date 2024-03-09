@@ -15,6 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.Json;
+using System.Text.Encodings.Web;
+using System.Runtime.Serialization.Json;
 
 namespace filemanager
 {
@@ -29,6 +32,7 @@ namespace filemanager
             Cons.AllocConsole();
 #endif
             InitializeComponent();
+            LoadFavouritesFromJson();
             RecentFiles.CollectionChanged += OnRecentFilesChanged;
             Favourites.CollectionChanged += OnFavouritesChanged;
         }
@@ -88,7 +92,35 @@ namespace filemanager
 
         private void OnFavouritesChanged(object sender, EventArgs e)
         {
+            List<FoldersAndFilesForJson>? _favouritesjson = new List<FoldersAndFilesForJson>();
             lstFavourites.ItemsSource = Favourites;
+            foreach (var i in Favourites)
+            {
+                _favouritesjson.Add(new FoldersAndFilesForJson(i.Name, i.PathOfDirectory, i.content));
+            }
+            FileStream fs = new FileStream(Directory.GetCurrentDirectory() + '\\' + "favourites_list.json", FileMode.Truncate);
+            JsonSerializer.Serialize(fs, _favouritesjson);
+            fs.Close();
+        }
+
+        private void LoadFavouritesFromJson()
+        {
+            FileStream fs = new FileStream(Directory.GetCurrentDirectory() + '\\' + "favourites_list.json", FileMode.OpenOrCreate);
+            List<FoldersAndFilesForJson>? _favouritesjson = new List<FoldersAndFilesForJson>();
+            try
+            {
+                _favouritesjson = JsonSerializer.Deserialize<List<FoldersAndFilesForJson>>(fs);
+            }
+            catch
+            {
+                return;
+            }
+            foreach (var f in _favouritesjson)
+            {
+                Favourites.Add(new FoldersAndFiles(f.Name, f.Path, f.Content));
+            }
+            lstFavourites.ItemsSource = Favourites;
+            fs.Close();
         }
 
         public event EventHandler<DirectoryChangedArgs> FavouritesClicked = (sender, args) => { };
@@ -98,6 +130,27 @@ namespace filemanager
             FoldersAndFiles selected = (FoldersAndFiles)lstFavourites.SelectedItem;
             FavouritesClicked(this, new DirectoryChangedArgs(selected.PathOfDirectory + '\\' + selected.Name));
             if (selected.content == ContentOfDirectory.File) RecentFiles.Add(selected);
+        }
+
+        private void deleteElement_Click(object sender, RoutedEventArgs e)
+        {
+            Favourites.Remove(lstFavourites.SelectedItem as FoldersAndFiles);
+        }
+    }
+
+    public class FoldersAndFilesForJson
+    {
+        public string Name {  get; set; }
+
+        public string Path {  get; set; }
+
+        public ContentOfDirectory Content {  get; set; }
+
+        public FoldersAndFilesForJson(string name, string path, ContentOfDirectory content)
+        {
+            Name = name;
+            Path = path;
+            Content = content;
         }
     }
 }

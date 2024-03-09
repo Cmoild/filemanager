@@ -26,6 +26,11 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete from Favourites" Name="deleteElement" Click="deleteElement_Click"/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
         <Border Grid.Row="2">
             <TextBlock Text="Recent files" VerticalAlignment="Center" HorizontalAlignment="Center"/>
