@@ -17,10 +17,12 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using System;
 using static System.Net.Mime.MediaTypeNames;
+using System.Drawing.Imaging;
+using System.Reflection.Metadata;
 
 namespace filemanager
 {
-    //TODO: открытие файлов (добавить разные варианты), предпросмотр
+    //TODO: открытие файлов (добавить разные варианты), предпросмотр, сохранение избранного
     //контекстное меню: добавление в избранное, свойства, переименование, копирование, перемещение, удаление
     public partial class MainWindow : Window
     {
@@ -36,6 +38,7 @@ namespace filemanager
             navigationBar.SearchingLineChanged += SearchElements;
             filesListBox.DoubleClick += ChangePathThruDirectory;
             filesListBox.AddToFavouritesClick += addToFavourites_Click;
+            filesListBox.PropertiesClick += OnPropertiesClicked;
             lstOfDisks.ItemsSource = ListOfDisks;
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
@@ -44,6 +47,7 @@ namespace filemanager
         {
             foreach (var drive in drives)
             {
+                if (drive.IsReady == false) continue;
                 double f = (double)drive.AvailableFreeSpace / (double)drive.TotalSize;
                 //Console.WriteLine(f);
                 _listOfDisks.Add(new Disk(drive.Name, 100 - f * 100));
@@ -52,6 +56,7 @@ namespace filemanager
 
         private void DirectoryChangedHandler(object? sender, DirectoryChangedArgs e)
         {
+            this.Cursor = System.Windows.Input.Cursors.Wait;
             if (e.Path == "")
             {
                 lstOfDisks.Visibility = Visibility.Visible;
@@ -62,7 +67,8 @@ namespace filemanager
                 if (!Directory.Exists(e.Path))
                 {
                     navigationBar.Line = "";
-                    MessageBox.Show("Directory does not exist");
+                    System.Windows.MessageBox.Show("Directory does not exist");
+                    this.Cursor = System.Windows.Input.Cursors.Arrow;
                     return;
                 }
 
@@ -79,14 +85,15 @@ namespace filemanager
                 catch(Exception ex)
                 {
                     Console.WriteLine("ACCESS DENIED");
-                    MessageBox.Show(ex.Message);
+                    System.Windows.MessageBox.Show(ex.Message);
+                    this.Cursor = System.Windows.Input.Cursors.Arrow;
                     return;
                 }
 
                 foreach (string name in dirs)
                 {
                     DirectoryInfo dir = new DirectoryInfo(name);
-                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, @e.Path, ContentOfDirectory.Directory, dir.LastAccessTime, dir.Extension));
+                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, @e.Path, ContentOfDirectory.Directory, dir.LastWriteTime, dir.Extension));
                 }
 
                 string[] files = Directory.GetFiles(@e.Path);
@@ -94,12 +101,13 @@ namespace filemanager
                 foreach (string name in files)
                 {
                     DirectoryInfo dir = new DirectoryInfo(name);
-                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, e.Path, ContentOfDirectory.File, dir.LastAccessTime, dir.Extension));
+                    ListOfDirectories.Add(new FoldersAndFiles(dir.Name, e.Path, ContentOfDirectory.File, dir.LastWriteTime, dir.Extension));
                 }
 
                 filesListBox.lstOfDirectories.ItemsSource = ListOfDirectories;
 
             }
+            this.Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
         private List<Disk> _listOfDisks = new List<Disk>();
@@ -176,7 +184,7 @@ namespace filemanager
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
             }
         }
 
@@ -196,9 +204,14 @@ namespace filemanager
 
         private async void SearchElements(object sender, EventArgs e)
         {
-            await Task.Run(() => Searching.SearchInDirectory(@navigationBar.Line, navigationBar.SearchingLine));
-            filesListBox.lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(Searching.result);
-            Searching.result.Clear();
+            string path = navigationBar.Line;
+            string request = navigationBar.SearchingLine;
+            var newc = await Task.Run(() => Searching.SearchInDirectory(@path, @request));
+            foreach (var i in newc)
+            {
+                Utils.InitializeIcons(i);
+            }
+            filesListBox.lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(newc);
         }
 
         private void addToFavourites_Click(object sender, EventArgs e)
@@ -206,6 +219,13 @@ namespace filemanager
             FoldersAndFiles selectded = sender as FoldersAndFiles;
             Console.WriteLine(selectded.Name);
             leftPanel.Favourites.Add(selectded);
+        }
+
+        private void OnPropertiesClicked(object sender, EventArgs e)
+        {
+            FoldersAndFiles selected = sender as FoldersAndFiles;
+            PropertiesWindow window = new PropertiesWindow(selected);
+            window.Show();
         }
     }
 
@@ -240,7 +260,7 @@ namespace filemanager
 
         public string Extencion { get; set; }
 
-        public string PathOfImage { get; set; }
+        public BitmapImage PathOfImage { get; set; }
 
         public FoldersAndFiles(string name, string path, ContentOfDirectory content)
         {
@@ -249,13 +269,16 @@ namespace filemanager
             this.content = content;
             if (content == ContentOfDirectory.Directory)
             {
-                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
-                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
+                //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
+                //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
+                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                PathOfImage = new BitmapImage(uri);
             }
             else
             {
-                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
-                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
+                //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
+                //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
+                PathOfImage = Utils.GetBitmapImage(@path + '\\' + @name);
             }
         }
 
@@ -267,14 +290,26 @@ namespace filemanager
             LastEdit = date.ToString("dd.MM.yyyy H:mm");
             if (content == ContentOfDirectory.Directory)
             {
-                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
-                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
+                //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
+                //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
+                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                PathOfImage = new BitmapImage(uri);
             }
             else
             {
-                PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
-                PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
+                //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
+                //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
+                PathOfImage = Utils.GetBitmapImage(@path + '\\' + @name); ;
             }
+            Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
+        }
+
+        public FoldersAndFiles(string name, string path, ContentOfDirectory content, DateTime date, string extencion, bool search)
+        {
+            Name = name;
+            PathOfDirectory = path;
+            this.content = content;
+            LastEdit = date.ToString("dd.MM.yyyy H:mm");
             Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
         }
     }
@@ -317,18 +352,18 @@ namespace filemanager
 
     public class Searching
     {
-        public static List<FoldersAndFiles> result = new List<FoldersAndFiles>();
+        //private static List<FoldersAndFiles> result = new List<FoldersAndFiles>();
 
         public static async Task<List<FoldersAndFiles>> SearchInDirectory(string directory, string target)
         {
-            result.Clear();
+            List<FoldersAndFiles> result = new List<FoldersAndFiles>();
 
             if (!Directory.Exists(directory))
             {
-                MessageBox.Show("Directory does not exist");
+                System.Windows.MessageBox.Show("Directory does not exist");
                 return null;
             }
-            MakeList(directory, target);
+            MakeList(directory, target, result);
 
             foreach (var cont in result)
             {
@@ -338,7 +373,7 @@ namespace filemanager
             return result;
         }
 
-        private static void MakeList(string directory, string target)
+        private static void MakeList(string directory, string target, List<FoldersAndFiles> result)
         {
             string[] dirs = { };
 
@@ -355,8 +390,8 @@ namespace filemanager
             {
                 DirectoryInfo dir = new DirectoryInfo(name);
                 if (dir.Name.ToUpper().Contains(target.ToUpper()))
-                    result.Add(new FoldersAndFiles(dir.Name, directory, ContentOfDirectory.Directory));
-                MakeList(name, target);
+                    result.Add(new FoldersAndFiles(@dir.Name, @directory, ContentOfDirectory.Directory, dir.LastWriteTime, dir.Extension, true));
+                MakeList(name, target, result);
             }
 
             string[] files = Directory.GetFiles(directory);
@@ -365,7 +400,37 @@ namespace filemanager
             {
                 DirectoryInfo dir = new DirectoryInfo(name);
                 if (dir.Name.ToUpper().Contains(target.ToUpper()))
-                    result.Add(new FoldersAndFiles(dir.Name, directory, ContentOfDirectory.File));
+                    result.Add(new FoldersAndFiles(@dir.Name, @directory, ContentOfDirectory.File, dir.LastWriteTime, dir.Extension, true));
+            }
+        }
+    }
+
+    public class Utils
+    {
+        public static BitmapImage GetBitmapImage(string path)
+        {
+            Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(@path);
+            MemoryStream memory = new MemoryStream();
+            icon.ToBitmap().Save(memory, ImageFormat.Png);
+            memory.Position = 0;
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = memory;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
+            return image;
+        }
+        public static void InitializeIcons(FoldersAndFiles file)
+        {
+            if (file.content == ContentOfDirectory.Directory)
+            {
+                //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
+                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                file.PathOfImage = new BitmapImage(uri);
+            }
+            else
+            {
+                file.PathOfImage = Utils.GetBitmapImage(@file.PathOfDirectory + '\\' + @file.Name);
             }
         }
     }

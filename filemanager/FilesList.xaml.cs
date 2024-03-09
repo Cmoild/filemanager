@@ -19,7 +19,7 @@ namespace filemanager
     /// <summary>
     /// Логика взаимодействия для FilesList.xaml
     /// </summary>
-    public partial class FilesList : UserControl
+    public partial class FilesList : System.Windows.Controls.UserControl
     {
         public FilesList()
         {
@@ -36,6 +36,8 @@ namespace filemanager
 
         public event EventHandler AddToFavouritesClick = (s, e) => { };
 
+        public event EventHandler PropertiesClick = (s, e) => { };
+
         private void addToFavourites_Click(object sender, RoutedEventArgs e)
         {
             FoldersAndFiles send = lstOfDirectories.SelectedItem as FoldersAndFiles;
@@ -46,6 +48,12 @@ namespace filemanager
         {
             FoldersAndFiles send = lstOfDirectories.SelectedItem as FoldersAndFiles;
             lstOfDirectories_MouseDoubleClick(send, null);
+        }
+
+        private void propertiesButton_Click(object sender, RoutedEventArgs e)
+        {
+            FoldersAndFiles send = lstOfDirectories.SelectedItem as FoldersAndFiles;
+            PropertiesClick(send, EventArgs.Empty);
         }
     }
 

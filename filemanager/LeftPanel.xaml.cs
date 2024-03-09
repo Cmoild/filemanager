@@ -21,7 +21,7 @@ namespace filemanager
     /// <summary>
     /// Логика взаимодействия для LeftPanel.xaml
     /// </summary>
-    public partial class LeftPanel : UserControl
+    public partial class LeftPanel : System.Windows.Controls.UserControl
     {
         public LeftPanel()
         {
@@ -72,7 +72,7 @@ namespace filemanager
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
             }
         }
 

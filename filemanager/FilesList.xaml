@@ -9,10 +9,10 @@
     <Grid x:Name="filesListGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="419*"/>
+            <RowDefinition Height="430*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="125" Width="10*"/>
+            <ColumnDefinition MinWidth="125" Width="2*"/>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition MinWidth="100"/>
             <ColumnDefinition Width="Auto" />
@@ -20,14 +20,14 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition MinWidth="100"/>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition MinWidth="20"/>
+            <ColumnDefinition MinWidth="20" Width="2*"/>
         </Grid.ColumnDefinitions>
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="1" HorizontalAlignment="Center" />
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="3" HorizontalAlignment="Center" />
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="5" HorizontalAlignment="Center" />
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="7" HorizontalAlignment="Center" />
         
-        <ListBox x:Name="lstOfDirectories" d:ItemsSource="{d:SampleData}" Grid.ColumnSpan="9" Grid.Column="0" Grid.Row="1" MouseDoubleClick="lstOfDirectories_MouseDoubleClick">
+        <ListBox x:Name="lstOfDirectories" d:ItemsSource="{d:SampleData}" Grid.ColumnSpan="9" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Grid.Column="0" Grid.Row="1" MouseDoubleClick="lstOfDirectories_MouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -50,8 +50,7 @@
             <ListBox.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Open" Name="openButton" Click="openButton_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Properties"/>
+                    <MenuItem Header="Properties" Name="propertiesButton" Click="propertiesButton_Click"/>
                     <MenuItem Header="Add to Favourites" Name="addToFavourites" Click="addToFavourites_Click"/>
                     <Separator/>
                     <MenuItem Header="New">
@@ -62,6 +61,7 @@
                     <MenuItem Header="Paste"/>
                     <MenuItem Header="Cut"/>
                     <MenuItem Header="Delete"/>
+                    <MenuItem Header="Rename"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
@@ -78,6 +78,6 @@
         <Border Grid.Column="6" Grid.Row="0" x:Name="sizeText">
             <TextBlock Text="Size" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Border>
-        
+
     </Grid>
 </UserControl>

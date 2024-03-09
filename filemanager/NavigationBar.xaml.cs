@@ -28,7 +28,7 @@ namespace filemanager
     /// <summary>
     /// Логика взаимодействия для NavigationBar.xaml
     /// </summary>
-    public partial class NavigationBar : UserControl
+    public partial class NavigationBar : System.Windows.Controls.UserControl
     {
 
         public NavigationBar()
