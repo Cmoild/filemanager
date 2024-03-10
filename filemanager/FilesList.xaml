@@ -48,7 +48,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
-                <ContextMenu>
+                <ContextMenu Opened="ContextMenu_Opened">
                     <MenuItem Header="Open" Name="openButton" Click="openButton_Click"/>
                     <MenuItem Header="Properties" Name="propertiesButton" Click="propertiesButton_Click"/>
                     <MenuItem Header="Add to Favourites" Name="addToFavourites" Click="addToFavourites_Click"/>
@@ -57,8 +57,8 @@
                         <MenuItem Header="Folder"/>
                         <MenuItem Header="Text document"/>
                     </MenuItem>
-                    <MenuItem Header="Copy"/>
-                    <MenuItem Header="Paste"/>
+                    <MenuItem Header="Copy" Name="copyButton" Click="copyButton_Click"/>
+                    <MenuItem Header="Paste" Name="pasteButton" Click="pasteButton_Click"/>
                     <MenuItem Header="Cut"/>
                     <MenuItem Header="Delete"/>
                     <MenuItem Header="Rename"/>

@@ -7,8 +7,82 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         Title="PropertiesWindow" Height="450" Width="400">
+    <Window.Resources>
+        <ControlTemplate TargetType="Button" x:Key="myButton">
+            <Border CornerRadius="4"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                Background="{TemplateBinding Background}"
+                Height="{TemplateBinding Height}"
+                Width="{TemplateBinding Width}" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="false">
+                    <Setter Property="Background" Value="#FFF3F3F3" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="BorderThickness" Value="1.75"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate TargetType="Button" x:Key="arrowButton">
+            <Border CornerRadius="30"
+        BorderBrush="{TemplateBinding BorderBrush}"
+        BorderThickness="{TemplateBinding BorderThickness}"
+        Background="{TemplateBinding Background}"
+        Height="{TemplateBinding Height}"
+        Width="{TemplateBinding Width}" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    Content="{TemplateBinding Content}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="BorderBrush" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="false">
+                    <Setter Property="Background" Value="#FFF3F3F3" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+        <ControlTemplate TargetType="TextBox" x:Key="myTextBox">
+            <Border 
+                BorderBrush="{TemplateBinding BorderBrush}"
+                Background="{TemplateBinding Background}"
+                BorderThickness="0.5" CornerRadius="4">
+                <ScrollViewer x:Name="PART_ContentHost" Margin="0,1,0,-1"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsFocused" Value="False">
+                    <Setter Property="Background" Value="#FFF3F3F3"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
     <Grid>
         <Image x:Name="fileIcon" Height="{Binding Height}" Width="{Binding Width}" Margin="168,10,168,357"/>
-        
+
     </Grid>
 </Window>

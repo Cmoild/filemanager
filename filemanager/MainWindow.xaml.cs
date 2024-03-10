@@ -1,29 +1,16 @@
-﻿using Microsoft.Win32;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
-using System.Drawing;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using System;
-using static System.Net.Mime.MediaTypeNames;
 using System.Drawing.Imaging;
-using System.Reflection.Metadata;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace filemanager
 {
-    //TODO: открытие файлов (добавить разные варианты), предпросмотр, сохранение избранного
-    //контекстное меню: добавление в избранное, свойства, переименование, копирование, перемещение, удаление
+    //TODO: открытие файлов (добавить разные варианты), предпросмотр
+    //контекстное меню: свойства, переименование, перемещение, удаление
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -39,6 +26,7 @@ namespace filemanager
             filesListBox.DoubleClick += ChangePathThruDirectory;
             filesListBox.AddToFavouritesClick += addToFavourites_Click;
             filesListBox.PropertiesClick += OnPropertiesClicked;
+            filesListBox.PasteButtonClicked += OnPasteButtonClicked;
             lstOfDisks.ItemsSource = ListOfDisks;
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
@@ -204,6 +192,7 @@ namespace filemanager
 
         private async void SearchElements(object sender, EventArgs e)
         {
+            this.Cursor = System.Windows.Input.Cursors.Wait;
             string path = navigationBar.Line;
             string request = navigationBar.SearchingLine;
             var newc = await Task.Run(() => Searching.SearchInDirectory(@path, @request));
@@ -212,6 +201,7 @@ namespace filemanager
                 Utils.InitializeIcons(i);
             }
             filesListBox.lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(newc);
+            this.Cursor = System.Windows.Input.Cursors.Arrow;
         }
 
         private void addToFavourites_Click(object sender, EventArgs e)
@@ -226,6 +216,39 @@ namespace filemanager
             FoldersAndFiles selected = sender as FoldersAndFiles;
             PropertiesWindow window = new PropertiesWindow(selected);
             window.Show();
+        }
+
+        private void OnPasteButtonClicked(object sender, EventArgs e)
+        {
+            StringCollection strings = System.Windows.Clipboard.GetFileDropList();
+            if (strings == null) return;
+            if (!Directory.Exists(@navigationBar.Line)) return;
+            foreach (string str in strings)
+            {
+                FileInfo fileInfo = new FileInfo(str);
+                try
+                {
+                    File.Copy(str, @navigationBar.Line + "\\" + fileInfo.Name);
+                }
+                catch(Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message + " It has been renamed.");
+                    int i = 0;
+                    while (true)
+                    {
+                        try
+                        {
+                            File.Copy(str, @navigationBar.Line + "\\" + '(' + ++i + ") " + fileInfo.Name);
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                        break;
+                    }
+                }
+                DirectoryChangedHandler(this, new DirectoryChangedArgs(@navigationBar.Line));
+            }
         }
     }
 
