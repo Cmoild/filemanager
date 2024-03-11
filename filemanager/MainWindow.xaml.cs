@@ -9,8 +9,8 @@ using System.Windows.Media.Imaging;
 
 namespace filemanager
 {
-    //TODO: открытие файлов (добавить разные варианты), предпросмотр
-    //контекстное меню: свойства, переименование, перемещение, удаление
+    //TODO: предпросмотр
+    //контекстное меню: переименование, перемещение
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -27,6 +27,7 @@ namespace filemanager
             filesListBox.AddToFavouritesClick += addToFavourites_Click;
             filesListBox.PropertiesClick += OnPropertiesClicked;
             filesListBox.PasteButtonClicked += OnPasteButtonClicked;
+            filesListBox.DeleteButtonClicked += OnDeleteButtonClicked;
             lstOfDisks.ItemsSource = ListOfDisks;
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
@@ -141,6 +142,7 @@ namespace filemanager
         private void ChangePathThruDirectory(object sender, EventArgs e)
         {
             var selected = sender as FoldersAndFiles;
+            if (selected == null) return;
             if (selected.content == ContentOfDirectory.Directory)
             {
                 if (selected.PathOfDirectory[selected.PathOfDirectory.Length - 1] != '\\')
@@ -232,7 +234,7 @@ namespace filemanager
                 }
                 catch(Exception ex)
                 {
-                    System.Windows.MessageBox.Show(ex.Message + " It has been renamed.");
+                    if (System.Windows.MessageBox.Show(ex.Message + " Do you want to rename it?", "Rename", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
                     int i = 0;
                     while (true)
                     {
@@ -249,6 +251,11 @@ namespace filemanager
                 }
                 DirectoryChangedHandler(this, new DirectoryChangedArgs(@navigationBar.Line));
             }
+        }
+
+        private void OnDeleteButtonClicked(object sender, EventArgs e)
+        {
+            DirectoryChangedHandler(this, new DirectoryChangedArgs(@navigationBar.Line));
         }
     }
 

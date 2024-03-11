@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -31,7 +32,16 @@ namespace filemanager
             fileIcon.Source = this.Icon;
         }
 
-        public FoldersAndFiles ObservedFile {  get; set; }
+        private ObservableCollection<string> Strings = new ObservableCollection<string>
+            {
+                "adfghadtfh",
+                "adfhadfhadh",
+                "dafgoiuhoipugo8yuf",
+                "sdoligjsoigjsdog",
+                "dofijghdeoifghjhdsoi"
+            };
+
+    public FoldersAndFiles ObservedFile {  get; set; }
 
         private BitmapImage MakeIcon(string path)
         {

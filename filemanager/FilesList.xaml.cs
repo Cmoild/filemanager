@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -26,6 +28,8 @@ namespace filemanager
         public FilesList()
         {
             InitializeComponent();
+            
+
         }
 
         private void lstOfDirectories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -74,7 +78,45 @@ namespace filemanager
 
         private void ContextMenu_Opened(object sender, RoutedEventArgs e)
         {
-
+            /*
+            object selected = lstOfDirectories.SelectedItems;
+            if (selected == null)
+            {
+                openButton.IsEnabled = false;
+                propertiesButton.IsEnabled = false;
+                addToFavourites.IsEnabled = false;
+                copyButton.IsEnabled = false;
+                pasteButton.IsEnabled = true;
+                newButton.IsEnabled = true;
+                deleteButton.IsEnabled = false;
+                //rename
+                //move
+            }
+            else if (lstOfDirectories.SelectedItems.Count > 1)
+            {
+                openButton.IsEnabled = false;
+                propertiesButton.IsEnabled = false;
+                addToFavourites.IsEnabled = false;
+                copyButton.IsEnabled = true;
+                pasteButton.IsEnabled = false;
+                newButton.IsEnabled = false;
+                deleteButton.IsEnabled = true;
+                //rename
+                //move
+            }
+            else
+            {
+                openButton.IsEnabled = true;
+                propertiesButton.IsEnabled = true;
+                addToFavourites.IsEnabled = true;
+                copyButton.IsEnabled = true;
+                pasteButton.IsEnabled = true;
+                newButton.IsEnabled = true;
+                deleteButton.IsEnabled = true;
+                //rename
+                //move
+            }
+            */
         }
 
         public event EventHandler PasteButtonClicked = (s, e) => { };
@@ -82,6 +124,31 @@ namespace filemanager
         private void pasteButton_Click(object sender, RoutedEventArgs e)
         {
             PasteButtonClicked(sender, EventArgs.Empty);
+        }
+
+        public event EventHandler DeleteButtonClicked = (s, e) => { };
+
+        private void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstOfDirectories.SelectedItems == null) return;
+            if (System.Windows.MessageBox.Show("Files will be permanently deleted. Do yo want to continue?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+            foreach (FoldersAndFiles item in lstOfDirectories.SelectedItems)
+            {
+                try
+                {
+                    File.Delete(item.PathOfDirectory + '\\' + item.Name);
+                }
+                catch(Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message);
+                }
+            }
+            DeleteButtonClicked(sender, EventArgs.Empty);
+        }
+
+        private void ContextMenu_Closed(object sender, RoutedEventArgs e)
+        {
+            lstOfDirectories.SelectedIndex = -1;
         }
     }
 
