@@ -150,6 +150,65 @@ namespace filemanager
         {
             lstOfDirectories.SelectedIndex = -1;
         }
+
+        bool multiSelectActivated = false;
+
+        System.Windows.Point startPoint;
+
+        private void lstOfDirectories_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            selectionRectangle.Visibility = Visibility.Visible;
+            startPoint = e.GetPosition(lstOfDirectories);
+            Console.WriteLine(startPoint);
+            Canvas.SetTop(selectionRectangle, startPoint.Y);
+            Canvas.SetLeft(selectionRectangle, startPoint.X);
+            multiSelectActivated = true;
+            Console.WriteLine(multiSelectActivated);
+            //selectionRectangle.Margin = new Thickness(point.X, 10, point.Y, 10);
+        }
+
+        private void lstOfDirectories_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            multiSelectActivated = false;
+            Console.WriteLine(multiSelectActivated);
+            selectionRectangle.Height = selectionRectangle.Width = 0;
+            selectionRectangle.Visibility = Visibility.Collapsed;
+        }
+
+        private void lstOfDirectories_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!multiSelectActivated) return;
+            System.Windows.Point newPoint = e.GetPosition(lstOfDirectories);
+            selectionRectangle.Width = Math.Abs(newPoint.X - startPoint.X);
+            selectionRectangle.Height = Math.Abs(newPoint.Y - startPoint.Y);
+            Canvas.SetLeft(selectionRectangle, Math.Min(startPoint.X, newPoint.X));
+            Canvas.SetRight(selectionRectangle, Math.Max(startPoint.X, newPoint.X));
+            Canvas.SetTop(selectionRectangle, Math.Min(startPoint.Y, newPoint.Y));
+            Canvas.SetBottom(selectionRectangle, Math.Max(startPoint.Y, newPoint.Y));
+        }
+
+        int inn = 0;
+
+        private void listBoxItem_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!multiSelectActivated) return;
+            //Console.WriteLine(e.OriginalSource.ToString());
+            lstOfDirectories.SelectedIndex = ++inn;
+            Console.WriteLine(lstOfDirectories.SelectedIndex);
+            return;
+            FoldersAndFiles src = sender as FoldersAndFiles;
+            Console.WriteLine(src.Name);
+            lstOfDirectories.SelectedIndex = lstOfDirectories.Items.IndexOf(src);
+            Console.WriteLine(lstOfDirectories.Items.IndexOf(src));
+        }
+
+        private void filesListGrid_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            multiSelectActivated = false;
+            Console.WriteLine(multiSelectActivated);
+            selectionRectangle.Height = selectionRectangle.Width = 0;
+            selectionRectangle.Visibility = Visibility.Collapsed;
+        }
     }
 
 }

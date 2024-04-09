@@ -31,7 +31,7 @@
             <Setter Property="Margin" Value="0,0,0,0" />
         </Style>
     </UserControl.Resources>
-    <Grid x:Name="filesListGrid">
+    <Grid x:Name="filesListGrid" MouseLeave="filesListGrid_MouseLeave">
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition Height="430*"/>
@@ -53,10 +53,14 @@
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="6" HorizontalAlignment="Center" />
         <GridSplitter Grid.Row="0" Width="3" Grid.Column="8" HorizontalAlignment="Center" />
 
-        <ListBox x:Name="lstOfDirectories" d:ItemsSource="{d:SampleData}" Grid.ColumnSpan="10" ItemContainerStyle="{StaticResource ControlListBoxItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Grid.Column="0" Grid.Row="1" MouseDoubleClick="lstOfDirectories_MouseDoubleClick">
+        <ListBox x:Name="lstOfDirectories" d:ItemsSource="{d:SampleData}" MouseLeftButtonDown="lstOfDirectories_MouseLeftButtonDown" SelectionMode="Multiple"
+                 MouseLeftButtonUp="lstOfDirectories_MouseLeftButtonUp"
+                 MouseMove="lstOfDirectories_MouseMove"
+                 Grid.ColumnSpan="10" ItemContainerStyle="{StaticResource ControlListBoxItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                 ScrollViewer.CanContentScroll="False" Grid.Column="0" Grid.Row="1" MouseDoubleClick="lstOfDirectories_MouseDoubleClick">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" x:Name="listBoxItem">
+                    <StackPanel Orientation="Horizontal" x:Name="listBoxItem" MouseEnter="listBoxItem_MouseEnter">
                         <Image Source="{Binding PathOfImage}" Width="16" Height="16" />
                         <TextBlock Text="{Binding Name}" Margin="0,0,0,0" Width="{Binding ActualWidth, ElementName=nameText}"/>
                         <!--rewrite, binding in code-behind-->
@@ -102,6 +106,10 @@
         <Border Grid.Column="7" Grid.Row="0" x:Name="sizeText">
             <TextBlock Text="Size" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Border>
+
+        <Canvas Grid.Row="1" x:Name="canvas" Grid.Column="0" Grid.ColumnSpan="10" Grid.RowSpan="1">
+            <Rectangle x:Name="selectionRectangle" Visibility="Visible" Fill="#3F00FFFF" IsHitTestVisible="False" MouseLeftButtonUp="lstOfDirectories_MouseLeftButtonUp" Stroke="Black"/>
+        </Canvas>
 
     </Grid>
 </UserControl>
