@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -208,6 +209,32 @@ namespace filemanager
             Console.WriteLine(multiSelectActivated);
             selectionRectangle.Height = selectionRectangle.Width = 0;
             selectionRectangle.Visibility = Visibility.Collapsed;
+        }
+
+        private void showAsTreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            FoldersAndFiles src = lstOfDirectories.SelectedItem as FoldersAndFiles;
+            
+            TreeViewerWindow treeViewer = new TreeViewerWindow(src.PathOfDirectory + "\\" + src.Name);
+            treeViewer.Owner = System.Windows.Application.Current.MainWindow;
+            treeViewer.Show();
+            treeViewer.tree.DoubleClick += OnMouseDoubleClickInTree;
+        }
+
+        private TreeViewerNode _latestTreeSender;
+
+        private void OnMouseDoubleClickInTree(object sender, EventArgs e)
+        {
+            var src = sender as TreeViewerNode;
+            if (src == null) return;
+            if (_latestTreeSender == src) return;
+            _latestTreeSender = src;
+            var cnt = new FoldersAndFiles(src.Name, 
+                src.content.PathOfDirectory.Substring(0, src.content.PathOfDirectory.Length - src.Name.Length), 
+                ContentOfDirectory.Directory);
+            
+
+            DoubleClick(cnt, EventArgs.Empty);
         }
     }
 

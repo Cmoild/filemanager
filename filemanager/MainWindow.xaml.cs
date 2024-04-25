@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
@@ -9,7 +10,9 @@ using System.Windows.Media.Imaging;
 
 namespace filemanager
 {
-    //TODO: предпросмотр
+    //TO DO: предпросмотр, список наиболее тяжёлых файлов (для удаления) пример tree size professional, топ 100 файлов по размеру
+    //добавить список файлов для квоты пользователя
+    //квота на каталог
     //контекстное меню: переименование, перемещение
     public partial class MainWindow : Window
     {
@@ -18,6 +21,8 @@ namespace filemanager
 #if DEBUG
             Cons.AllocConsole();
 #endif
+
+            
             InitializeComponent();
             AddDrivesToList();
             navigationBar.DirectoryChanged += DirectoryChangedHandler;
@@ -29,6 +34,10 @@ namespace filemanager
             filesListBox.PasteButtonClicked += OnPasteButtonClicked;
             filesListBox.DeleteButtonClicked += OnDeleteButtonClicked;
             lstOfDisks.ItemsSource = ListOfDisks;
+
+            //TreeViewerWindow treeViewer = new TreeViewerWindow("C:\\Users\\cold1\\Desktop");
+            //treeViewer.Show();
+
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
         }
 
@@ -257,6 +266,29 @@ namespace filemanager
         {
             DirectoryChangedHandler(this, new DirectoryChangedArgs(@navigationBar.Line));
         }
+
+        private TreeViewerNode _latestTreeSender;
+
+        private void showAsTreeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Disk dsk = lstOfDisks.SelectedItem as Disk;
+
+            //FoldersAndFiles src = new FoldersAndFiles(dsk.Name, dsk.Name + '\\', ContentOfDirectory.Directory);
+
+            TreeViewerWindow treeViewer = new TreeViewerWindow(dsk.Name);
+            treeViewer.Owner = System.Windows.Application.Current.MainWindow;
+            treeViewer.Show();
+            treeViewer.tree.DoubleClick += OnMouseDoubleClickInTree;
+        }
+
+        private void OnMouseDoubleClickInTree(object sender, EventArgs e)
+        {
+            var src = sender as TreeViewerNode;
+            if (src == null) return;
+            if (_latestTreeSender == src) return;
+            _latestTreeSender = src;
+            navigationBar.Line = src.content.PathOfDirectory;
+        }
     }
 
     public enum ContentOfDirectory
@@ -267,10 +299,13 @@ namespace filemanager
 
     public class FoldersAndFiles
     {
+        private string folderImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\folder.png";
 
         string _name = "";
 
         string _path = "";
+
+        public long fileSize = 0;
 
         public ContentOfDirectory content;
 
@@ -292,6 +327,8 @@ namespace filemanager
 
         public BitmapImage PathOfImage { get; set; }
 
+        public string Size { get; set; }
+
         public FoldersAndFiles(string name, string path, ContentOfDirectory content)
         {
             Name = name;
@@ -301,7 +338,7 @@ namespace filemanager
             {
                 //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
                 //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
-                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                Uri uri = new Uri(folderImage);
                 PathOfImage = new BitmapImage(uri);
             }
             else
@@ -318,18 +355,32 @@ namespace filemanager
             PathOfDirectory = path;
             this.content = content;
             LastEdit = date.ToString("dd.MM.yyyy H:mm");
+            
             if (content == ContentOfDirectory.Directory)
             {
                 //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
                 //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png";
-                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                Uri uri = new Uri(folderImage);
                 PathOfImage = new BitmapImage(uri);
             }
             else
             {
                 //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\file.png";
                 //PathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\file.png";
-                PathOfImage = Utils.GetBitmapImage(@path + '\\' + @name); ;
+                PathOfImage = Utils.GetBitmapImage(@path + '\\' + @name);
+                FileInfo fileInfo = new FileInfo(@path + '\\' + @name);
+                double size = fileInfo.Length;
+                fileSize = fileInfo.Length;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (size < 1024)
+                    {
+                        Size = String.Format("{0:0.00}", size) + ' ' + Enum.GetName(typeof(SizeNames), i);
+                        break;
+                    }
+                    size /= 1024;
+                }
+
             }
             Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
         }
@@ -373,7 +424,7 @@ namespace filemanager
             this.name = name;
             this.fullness = fullness;
             this.pathOfImage = Directory.GetCurrentDirectory() + "\\textures\\disk_image.png";
-            pathOfImage = "C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\disk_image.png";
+            pathOfImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\disk_image.png";
             DriveInfo driveInfo = new DriveInfo(name);
             EmptySpace = "Avalable free space " + string.Format("{0:0.00}", (double)driveInfo.AvailableFreeSpace / Math.Pow(1024, 3)) + " GB"
                 + "\n" + "Total space " + string.Format("{0:0.00}", (double)driveInfo.TotalSize / Math.Pow(1024, 3)) + " GB";
@@ -437,6 +488,8 @@ namespace filemanager
 
     public class Utils
     {
+        private static string folderImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\folder.png";
+
         public static BitmapImage GetBitmapImage(string path)
         {
             Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(@path);
@@ -455,7 +508,7 @@ namespace filemanager
             if (file.content == ContentOfDirectory.Directory)
             {
                 //PathOfImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
-                Uri uri = new Uri("C:\\Users\\Никита\\source\\repos\\filemanager\\filemanager\\textures\\folder.png");
+                Uri uri = new Uri(folderImage);
                 file.PathOfImage = new BitmapImage(uri);
             }
             else

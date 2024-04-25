@@ -30,32 +30,13 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
-<!--
-        <ListBox x:Name="lstOfDirectories" Visibility="Collapsed" SelectionMode="Extended" Panel.ZIndex="1" d:ItemsSource="{d:SampleData}" MouseDoubleClick="ChangePathThruDirectory" Grid.Column="1" Grid.Row="1">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding PathOfImage}" Width="16" Height="16" />
-                        <TextBlock Width="519" Text="{Binding Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="Open"/>
-                    <Separator/>
-                    <MenuItem Header="Properties"/>
-                    <MenuItem Header="Add to Favourites" Name="addToFavourites" Click="addToFavourites_Click"/>
-                    <Separator/>
-                    <MenuItem Header="Copy"/>
-                    <MenuItem Header="Paste"/>
-                    <MenuItem Header="Cut"/>
-                    <MenuItem Header="Delete"/>
+                    <MenuItem Header="Show As Tree" x:Name="showAsTreeButton" Click="showAsTreeButton_Click"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
--->
+
         <local:LeftPanel x:Name="leftPanel" Grid.Row="1"/>
 
         <local:FilesList x:Name="filesListBox" Grid.Column="1" Grid.Row="1" Visibility="Collapsed"/>

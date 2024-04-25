@@ -8,12 +8,15 @@
              Background="White"
              d:DesignHeight="380" Width="200">
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" MinHeight="50"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+        
         <Border Grid.Row="0" x:Name="fovouritesText">
             <TextBlock Text="Favourites" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Border>
@@ -32,10 +35,10 @@
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
-        <Border Grid.Row="2">
+        <Border Grid.Row="3" VerticalAlignment="Stretch">
             <TextBlock Text="Recent files" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Border>
-        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstRecentFiles" MouseDoubleClick="lstRecentFiles_MouseDoubleClick" Grid.Row="3">
+        <ListBox d:ItemsSource="{d:SampleData}" x:Name="lstRecentFiles" MouseDoubleClick="lstRecentFiles_MouseDoubleClick" Grid.Row="4">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
@@ -45,5 +48,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
+        <GridSplitter Grid.Row="2" Height="4" HorizontalAlignment="Stretch"/>
     </Grid>
 </UserControl>

@@ -42,6 +42,6 @@
     </Window.Resources>
     <Grid>
         <Image x:Name="fileIcon" Height="{Binding Height}" Width="{Binding Width}" Margin="168,10,168,357"/>
-
+        
     </Grid>
 </Window>
