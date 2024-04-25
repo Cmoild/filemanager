@@ -33,6 +33,8 @@ namespace filemanager
 
         }
 
+        public string currentDir;
+
         private void lstOfDirectories_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             FoldersAndFiles send = lstOfDirectories.SelectedItem as FoldersAndFiles;
@@ -235,6 +237,11 @@ namespace filemanager
             
 
             DoubleClick(cnt, EventArgs.Empty);
+        }
+
+        private void createNewFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 

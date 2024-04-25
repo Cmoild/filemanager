@@ -101,6 +101,11 @@ namespace filemanager
 
             root.Nodes = new ObservableCollection<TreeViewerNode>(root.Nodes.OrderByDescending(n => n.Size).ToList());
 
+            foreach (TreeViewerNode node in root.Nodes)
+            {
+                node.Fullness = 100 * ((double)node.Size / (double)root.Size);
+            }
+
         }
 
         public void ShowTree(string path)
@@ -119,6 +124,8 @@ namespace filemanager
 
             Nodes = new ObservableCollection<TreeViewerNode> { Root };
 
+            Root.Fullness = 100;
+
             tree.ItemsSource = Nodes;
         }
 
@@ -128,6 +135,7 @@ namespace filemanager
 
             DoubleClick(src, EventArgs.Empty);
         }
+
     }
 
     public class TreeViewerNode
@@ -146,6 +154,10 @@ namespace filemanager
 
         public string StrSize {  get; set; }
 
+        public string Source {  get; set; }
+
+        public double Fullness {  get; set; }
+
         public ObservableCollection<TreeViewerNode> Nodes { get; set; }
 
         public TreeViewerNode(string path, string name, ContentOfDirectory cnt) 
@@ -153,6 +165,7 @@ namespace filemanager
             content = new FoldersAndFiles(name, path, cnt);
             Nodes = new ObservableCollection<TreeViewerNode>();
             Name = name;
+            Source = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\folder.png";
         }
 
         public TreeViewerNode(string name, ObservableCollection<TreeViewerNode> collection)

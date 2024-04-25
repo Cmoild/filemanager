@@ -103,6 +103,7 @@ namespace filemanager
                 }
 
                 filesListBox.lstOfDirectories.ItemsSource = ListOfDirectories;
+                filesListBox.currentDir = navigationBar.Line;
 
             }
             this.Cursor = System.Windows.Input.Cursors.Arrow;
@@ -392,6 +393,18 @@ namespace filemanager
             this.content = content;
             LastEdit = date.ToString("dd.MM.yyyy H:mm");
             Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
+            FileInfo fileInfo = new FileInfo(@path + '\\' + @name);
+            double size = fileInfo.Length;
+            fileSize = fileInfo.Length;
+            for (int i = 0; i < 4; i++)
+            {
+                if (size < 1024)
+                {
+                    Size = String.Format("{0:0.00}", size) + ' ' + Enum.GetName(typeof(SizeNames), i);
+                    break;
+                }
+                size /= 1024;
+            }
         }
     }
 

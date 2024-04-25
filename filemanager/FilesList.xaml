@@ -81,14 +81,12 @@
                     <MenuItem Header="Show as tree" x:Name="showAsTreeButton" Click="showAsTreeButton_Click"/>
                     <Separator/>
                     <MenuItem Header="New..." x:Name="newButton">
-                        <MenuItem Header="Folder"/>
+                        <MenuItem Header="Folder" x:Name="createNewFolderButton" Click="createNewFolderButton_Click"/>
                         <MenuItem Header="Text document"/>
                     </MenuItem>
                     <MenuItem Header="Copy" x:Name="copyButton" Click="copyButton_Click"/>
                     <MenuItem Header="Paste" x:Name="pasteButton" Click="pasteButton_Click"/>
-                    <MenuItem Header="Move to..."/>
                     <MenuItem Header="Delete" x:Name="deleteButton" Click="deleteButton_Click"/>
-                    <MenuItem Header="Rename"/>
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>

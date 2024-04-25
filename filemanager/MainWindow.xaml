@@ -24,7 +24,7 @@
                     <StackPanel Height="33" Width="404" Orientation="Horizontal">
                         <Image Source="{Binding PathOfImage}" Height="31" Width="33" ></Image>
                         <TextBlock Text="{Binding Name}" Width="35"></TextBlock>
-                        <ProgressBar Width="100" Value="{Binding Fullness}" />
+                        <ProgressBar Width="100" Value="{Binding Fullness}" Height="15" Foreground="DodgerBlue" Background="White" BorderBrush="LightGray" BorderThickness="1.5"/>
                         <TextBlock Width="10"/>
                         <TextBlock Width="208" Text="{Binding EmptySpace}"/>
                     </StackPanel>
