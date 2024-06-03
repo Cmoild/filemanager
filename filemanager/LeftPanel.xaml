@@ -49,6 +49,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <GridSplitter Grid.Row="2" Height="4" HorizontalAlignment="Stretch"/>
+        <GridSplitter Grid.Row="2" Height="0" HorizontalAlignment="Stretch"/>
     </Grid>
 </UserControl>

@@ -38,7 +38,11 @@ namespace filemanager
 #endif
             InitializeComponent();
             //Console.WriteLine(_lines.Count);
+            
+            //Console.WriteLine(arrup.Source.ToString());
         }
+
+        string ImgSrc = Directory.GetCurrentDirectory() + "\\textures\\arrow_up.png";
 
         public event EventHandler<DirectoryChangedArgs> DirectoryChanged = (s, e) => { };
 

@@ -23,7 +23,7 @@
                 <DataTemplate>
                     <StackPanel Height="33" Width="404" Orientation="Horizontal">
                         <Image Source="{Binding PathOfImage}" Height="31" Width="33" ></Image>
-                        <TextBlock Text="{Binding Name}" Width="35"></TextBlock>
+                        <TextBlock Text="{Binding Name}" Width="35" TextAlignment="Center" Height="17"></TextBlock>
                         <ProgressBar Width="100" Value="{Binding Fullness}" Height="15" Foreground="DodgerBlue" Background="White" BorderBrush="LightGray" BorderThickness="1.5"/>
                         <TextBlock Width="10"/>
                         <TextBlock Width="208" Text="{Binding EmptySpace}"/>
@@ -40,5 +40,7 @@
         <local:LeftPanel x:Name="leftPanel" Grid.Row="1"/>
 
         <local:FilesList x:Name="filesListBox" Grid.Column="1" Grid.Row="1" Visibility="Collapsed"/>
+
+        <ListBox x:Name="usersList" Grid.Row="1" Height="100" VerticalAlignment="Bottom" MouseDoubleClick="usersList_MouseDoubleClick"/>
     </Grid>
 </Window>

@@ -76,14 +76,14 @@
             <ListBox.ContextMenu>
                 <ContextMenu Opened="ContextMenu_Opened" Closed="ContextMenu_Closed">
                     <MenuItem Header="Open" x:Name="openButton" Click="openButton_Click"/>
-                    <MenuItem Header="Properties" x:Name="propertiesButton" Click="propertiesButton_Click"/>
-                    <MenuItem Header="Add to Favourites" x:Name="addToFavourites" Click="addToFavourites_Click"/>
+                    <!--<MenuItem Header="Properties" x:Name="propertiesButton" Click="propertiesButton_Click"/>-->
+                        <MenuItem Header="Add to Favourites" x:Name="addToFavourites" Click="addToFavourites_Click"/>
                     <MenuItem Header="Show as tree" x:Name="showAsTreeButton" Click="showAsTreeButton_Click"/>
                     <Separator/>
-                    <MenuItem Header="New..." x:Name="newButton">
+                    <!--<MenuItem Header="New..." x:Name="newButton">
                         <MenuItem Header="Folder" x:Name="createNewFolderButton" Click="createNewFolderButton_Click"/>
                         <MenuItem Header="Text document"/>
-                    </MenuItem>
+                    </MenuItem>-->
                     <MenuItem Header="Copy" x:Name="copyButton" Click="copyButton_Click"/>
                     <MenuItem Header="Paste" x:Name="pasteButton" Click="pasteButton_Click"/>
                     <MenuItem Header="Delete" x:Name="deleteButton" Click="deleteButton_Click"/>

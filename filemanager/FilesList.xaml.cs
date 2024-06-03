@@ -134,8 +134,10 @@ namespace filemanager
         private void deleteButton_Click(object sender, RoutedEventArgs e)
         {
             if (lstOfDirectories.SelectedItems == null) return;
+            List<object> selected = new List<object>();
+            foreach (object item in lstOfDirectories.SelectedItems) { selected.Add(item); }
             if (System.Windows.MessageBox.Show("Files will be permanently deleted. Do yo want to continue?", "Delete", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
-            foreach (FoldersAndFiles item in lstOfDirectories.SelectedItems)
+            foreach (FoldersAndFiles item in selected)
             {
                 try
                 {

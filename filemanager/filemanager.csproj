@@ -10,7 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="textures\" />
+    <Compile Remove="textures\**" />
+    <EmbeddedResource Remove="textures\**" />
+    <None Remove="textures\**" />
+    <Page Remove="textures\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="arrow_up.png" />
   </ItemGroup>
 
   <ItemGroup>

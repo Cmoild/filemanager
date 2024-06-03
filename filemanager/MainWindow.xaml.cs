@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Drawing;
+using System.DirectoryServices;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
@@ -11,9 +11,10 @@ using System.Windows.Media.Imaging;
 namespace filemanager
 {
     //TO DO: предпросмотр, список наиболее тяжёлых файлов (для удаления) пример tree size professional, топ 100 файлов по размеру
-    //добавить список файлов для квоты пользователя
-    //квота на каталог
+    //добавить список файлов для пользователя
+
     //контекстное меню: переименование, перемещение
+    //исправить удаление
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -39,6 +40,8 @@ namespace filemanager
             //treeViewer.Show();
 
             //ObservableCollection<FoldersAndFiles> foldersAndFiles = new ObservableCollection<FoldersAndFiles>(Searching.SearchInDirectory(@"C:\", "exe"));
+            //navigationBar.Line = "C:\\";
+            usersList.ItemsSource = GetLocalUsers();
         }
 
         private void AddDrivesToList()
@@ -107,6 +110,8 @@ namespace filemanager
 
             }
             this.Cursor = System.Windows.Input.Cursors.Arrow;
+            //Console.WriteLine(navigationBar.Line);
+            //SearchUserFiles("cold1");
         }
 
         private List<Disk> _listOfDisks = new List<Disk>();
@@ -290,6 +295,40 @@ namespace filemanager
             _latestTreeSender = src;
             navigationBar.Line = src.content.PathOfDirectory;
         }
+
+        private async void SearchUserFiles(string request)
+        {
+            if (navigationBar.Line.Length == 0) return;
+            this.Cursor = System.Windows.Input.Cursors.Wait;
+            string path = navigationBar.Line;
+            var newc = await Task.Run(() => Searching.SearchForUserFilesInDirectory(@path, @request));
+            if (newc.Count > 0) newc = newc.OrderByDescending(i => i.fileSize).ToList().Slice(0, Math.Min(newc.Count, 50));
+            foreach (var i in newc)
+            {
+                Utils.InitializeIcons(i);
+            }
+            filesListBox.lstOfDirectories.ItemsSource = new ObservableCollection<FoldersAndFiles>(newc.OrderByDescending(i => i.fileSize).ToList());
+            this.Cursor = System.Windows.Input.Cursors.Arrow;
+        }
+
+        List<string> GetLocalUsers()
+        {
+            List<string> users = new List<string>();
+            var path =
+                string.Format("WinNT://{0},computer", Environment.MachineName);
+
+            using (var computerEntry = new DirectoryEntry(path))
+                foreach (DirectoryEntry childEntry in computerEntry.Children)
+                    if (childEntry.SchemaClassName == "User")
+                        users.Add(childEntry.Name);
+
+            return users;
+        }
+
+        private void usersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            SearchUserFiles(usersList.SelectedItem.ToString());
+        }
     }
 
     public enum ContentOfDirectory
@@ -300,7 +339,7 @@ namespace filemanager
 
     public class FoldersAndFiles
     {
-        private string folderImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\folder.png";
+        private string folderImage = Directory.GetCurrentDirectory() + "\\textures\\folder.png";
 
         string _name = "";
 
@@ -394,6 +433,7 @@ namespace filemanager
             LastEdit = date.ToString("dd.MM.yyyy H:mm");
             Extencion = (content == ContentOfDirectory.Directory) ? "Folder" : "File (" + extencion + ")";
             FileInfo fileInfo = new FileInfo(@path + '\\' + @name);
+            if (fileInfo.Exists == false) return;
             double size = fileInfo.Length;
             fileSize = fileInfo.Length;
             for (int i = 0; i < 4; i++)
@@ -437,7 +477,7 @@ namespace filemanager
             this.name = name;
             this.fullness = fullness;
             this.pathOfImage = Directory.GetCurrentDirectory() + "\\textures\\disk_image.png";
-            pathOfImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\disk_image.png";
+            //pathOfImage = "C:\\Users\\cold1\\Source\\Repos\\Cmoild\\filemanager\\filemanager\\textures\\disk_image.png";
             DriveInfo driveInfo = new DriveInfo(name);
             EmptySpace = "Avalable free space " + string.Format("{0:0.00}", (double)driveInfo.AvailableFreeSpace / Math.Pow(1024, 3)) + " GB"
                 + "\n" + "Total space " + string.Format("{0:0.00}", (double)driveInfo.TotalSize / Math.Pow(1024, 3)) + " GB";
@@ -497,6 +537,67 @@ namespace filemanager
                     result.Add(new FoldersAndFiles(@dir.Name, @directory, ContentOfDirectory.File, dir.LastWriteTime, dir.Extension, true));
             }
         }
+
+        public static async Task<List<FoldersAndFiles>> SearchForUserFilesInDirectory(string directory, string target)
+        {
+            List<FoldersAndFiles> result = new List<FoldersAndFiles>();
+
+            if (!Directory.Exists(directory))
+            {
+                System.Windows.MessageBox.Show("Directory does not exist");
+                return null;
+            }
+            MakeListForSearchingUserFiles(directory, target, result);
+
+            foreach (var cont in result)
+            {
+                Console.WriteLine(cont.Name + " " + cont.PathOfDirectory + " " + cont.content);
+            }
+
+            return result;
+        }
+
+        private static void MakeListForSearchingUserFiles(string directory, string target, List<FoldersAndFiles> result)
+        {
+            string[] dirs = { };
+
+            try
+            {
+                dirs = Directory.GetDirectories(directory);
+            }
+            catch
+            {
+                return;
+            }
+
+            foreach (string name in dirs)
+            {
+                MakeListForSearchingUserFiles(name, target, result);
+            }
+
+            string[] files = Directory.GetFiles(directory);
+
+            foreach (string name in files)
+            {
+                DirectoryInfo dir = new DirectoryInfo(name);
+                
+                FileInfo fileInfo = new FileInfo(name);
+                try
+                {
+                    var user = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount));
+                    //Console.WriteLine(user);
+                    if (user.ToString().Contains(target))
+                        result.Add(new FoldersAndFiles(@dir.Name, @directory, ContentOfDirectory.File, dir.LastWriteTime, dir.Extension, true));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
+                }
+                if (dir.Name.ToUpper().Contains(target.ToUpper()))
+                    result.Add(new FoldersAndFiles(@dir.Name, @directory, ContentOfDirectory.File, dir.LastWriteTime, dir.Extension, true));
+            }
+        }
+
     }
 
     public class Utils
@@ -532,3 +633,15 @@ namespace filemanager
     }
 
 }
+/*
+ *                  FileInfo fileInfo = new FileInfo(name);
+                    try {
+                        var user = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount));
+                        Console.WriteLine(user);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"{ex.Message}");
+                    }
+
+ */

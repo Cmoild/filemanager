@@ -95,18 +95,18 @@
             <ColumnDefinition Width="59*" MaxWidth="70"/>
             <ColumnDefinition Width="259*" MaxWidth="306"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="goUpButton" Template="{StaticResource arrowButton}" HorizontalAlignment="Left" Click="GoUpButton_Click" VerticalAlignment="Center" Width="22" Height="22" Grid.Column="0" Margin="37,0,0,0">
-            <Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\arrow_up.png"/>
+        <Button x:Name="goUpButton" Template="{StaticResource arrowButton}" Content="^" HorizontalAlignment="Left" Click="GoUpButton_Click" VerticalAlignment="Center" Width="22" Height="22" Grid.Column="0" Margin="64,0,0,0">
+            <!--<Image Source="arrow_up.png" x:Name="arrup"/>-->
         </Button>
-        <Button Template="{StaticResource arrowButton}" x:Name="goForwardButton" HorizontalAlignment="Left" Width="22" Height="22" Margin="64,0,0,0" Grid.Column="0"  VerticalAlignment="Center" Click="goForwardButton_Click">
-            <Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\arrow_right.png"/>
+        <Button Template="{StaticResource arrowButton}" x:Name="goForwardButton" Content=">" HorizontalAlignment="Left" Width="22" Height="22" Margin="37,0,0,0" Grid.Column="0"  VerticalAlignment="Center" Click="goForwardButton_Click">
+            <!--<Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\arrow_right.png"/>-->
         </Button>
-        <Button x:Name="goBackButton" HorizontalAlignment="Left" Grid.Column="0" VerticalAlignment="Center" Click="goBackButton_Click" Template="{StaticResource arrowButton}" Width="22" Height="22" Margin="10,0,0,0">
-            <Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\arrow_left.png"/>
+        <Button x:Name="goBackButton" HorizontalAlignment="Left" Grid.Column="0" Content="&lt;"  VerticalAlignment="Center" Click="goBackButton_Click" Template="{StaticResource arrowButton}" Width="22" Height="22" Margin="10,0,0,0">
+            <!--<Image Source="C:\Users\cold1\Source\Repos\Cmoild\filemanager\filemanager\textures\arrow_left.png"/>-->
         </Button>
         <TextBox x:Name="filePathBar"  Template="{StaticResource myTextBox}" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Height="20" Grid.Column="1" Margin="10,0,10,0"/>
         <Button Content="Find" Template="{StaticResource myButton}" x:Name="searchingButton" Click="searchingButton_Click" VerticalAlignment="Center" HorizontalAlignment="Center" Width="56" Grid.Column="2" Height="20"/>
-        <TextBox Margin="4,10,0,11" x:Name="searchBar" Template="{StaticResource myTextBox}" HorizontalAlignment="Left" Width="164" Grid.Column="3"/>
-        <Button x:Name="userSearchButton" Template="{StaticResource myButton}" Margin="173,0,0,0" HorizontalAlignment="Left" Width="56" VerticalAlignment="Center"  Content="Search" Click="userSearchButton_Click" Grid.Column="3" Height="20"/>
+        <TextBox Margin="10,10,0,11" x:Name="searchBar" Template="{StaticResource myTextBox}" HorizontalAlignment="Left" Width="158" Grid.Column="3"/>
+        <Button x:Name="userSearchButton" Template="{StaticResource myButton}" Margin="178,0,0,0" HorizontalAlignment="Left" Width="56" VerticalAlignment="Center"  Content="Search" Click="userSearchButton_Click" Grid.Column="3" Height="20"/>
     </Grid>
 </UserControl>
